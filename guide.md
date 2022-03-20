@@ -39,7 +39,7 @@ http://127.0.0.1:800
 You need to activate the environment and then run the server:
 
 ```sh
-source ./.env/bin/activate
+source ./.venv/bin/activate
 
 #after that you will see something like:
 (.env) bagansio@Bagansio: 

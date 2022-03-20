@@ -1,4 +1,5 @@
 .venv
 .env
+.idea
 server/db.sqlite3
 *.pyc

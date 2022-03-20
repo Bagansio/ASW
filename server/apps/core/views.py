@@ -8,6 +8,12 @@ import datetime
 
 def news(request):
     # fetch date and time
+
+    # if you have empty the db and need  to create one
+    # user = User(username='Bagansio')
+    # user.save()
+
+
     user = User.objects.get(pk=1) #Bagansio ^^
 
 

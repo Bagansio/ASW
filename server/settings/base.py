@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "server.apps.accounts",
+    "server.apps.core",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

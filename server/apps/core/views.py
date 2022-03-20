@@ -19,22 +19,25 @@ def news(request):
 
 
     user = User.objects.get(pk=1) #Bagansio ^^
-    submissions = Submission.objects.all()
+    submissions = list(Submission.objects.all())
     #submissions = Submission.objects.get()
     now = datetime.datetime.now()
-    # convert to string
-    html = "Time is {} ".format(now)
-    html += str(user.id) + " " + user.username
-    # return response
-    tmp = loader.get_template('core/main.html')  # load the html
-    document = tmp.render() #render the html with the context
-    return HttpResponse(document)
-
+    context = {
+        'submissions': submissions,
+        'user': user
+    }
+    response = render(request, 'core/main.html', context=context)  # render the html with the context
+    return HttpResponse(response)
 class SubmissionsView(View):
 
 
     def get(self,request, *args, **kwargs):
         user = User.objects.get(pk=1)  # Bagansio ^^
+        now = datetime.datetime.now()
+        #to create testing submissions
+        #submission = Submission(title="AO Owo", url="https://stackoverflow.com/", text="Yepa", created_at=now, author=user)
+        #submission.save()
+
         context = {
             'submit_form': SubmissionForm(),
             'user': user

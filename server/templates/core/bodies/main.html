@@ -10,18 +10,18 @@
             <table>
               <tbody>
 
-              {% for i,submit in submits %}
-              <tr class="athing" id="{{ submit.id }}">
+              {% for submission in submissions %}
+              <tr class="athing" id="{{ submission.id }}">
                 <td align="right" valign="top" class="title">
-                  <span class="rank">{{ i }}.</span>
+                  <span class="rank">{{  forloop.counter }}.</span>
                 </td>
 
                 <td valign="top" class="votelinks">
                   /\
                 </td>
                 <td class="title">
-                  <a href="{{ submit.url }}" class="titlelink">
-                    {{  submit.title }}
+                  <a href="{{ submission.url }}" class="titlelink">
+                    {{  submission.title }}
                   </a>
                   <span class="sitebit comhead">
                     " ("
@@ -33,11 +33,11 @@
               <tr>
                 <td colspan="2"/>
                 <td class="subtext">
-                  <span class="score" id="score_{{ submit.id }}">100 points</span>
+                  <span class="score" id="score_{{ submission.id }}">100 points</span>
                   " by "
-                  <a href="" class="hnuser">{{ submit.author.username }}</a>
-                  <span class="age" title="{{ submit.created_at }}">
-                    <a href="">{{ submit.created_at }}</a>
+                  <a href="" class="hnuser">{{ submission.author.username }}</a>
+                  <span class="age" title="{{ submission.created_at }}">
+                    <a href="">{{ submission.created_at }}</a>
                   </span>
                 </td>
               </tr>

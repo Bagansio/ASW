@@ -24,9 +24,9 @@
                     {{  submission.title }}
                   </a>
                   <span class="sitebit comhead">
-                    " ("
+                     (
                     <a href=""> <span class="sitestr">test.com</span></a>
-                    ")"
+                    )
                   </span>
                 </td>
               </tr>
@@ -34,10 +34,10 @@
                 <td colspan="2"/>
                 <td class="subtext">
                   <span class="score" id="score_{{ submission.id }}">100 points</span>
-                  " by "
+                   by
                   <a href="" class="hnuser">{{ submission.author.username }}</a>
                   <span class="age" title="{{ submission.created_at }}">
-                    <a href="">{{ submission.created_at }}</a>
+                    <a href=""> {{ submission.created_at|timesince }} ago </a>
                   </span>
                 </td>
               </tr>

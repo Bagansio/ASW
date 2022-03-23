@@ -9,13 +9,12 @@ import datetime
 
 # Create your views here.
 
-
 def news(request):
     # fetch date and time
 
     # if you have empty the db and need  to create one
-    # user = User(username='Bagansio')
-    # user.save()
+    #user = User(username='Bagansio')
+    #user.save()
 
 
     user = User.objects.get(pk=1) #Bagansio ^^
@@ -24,7 +23,7 @@ def news(request):
     now = datetime.datetime.now()
     context = {
         'submissions': submissions,
-        'user': user
+        'user': user,
     }
     response = render(request, 'core/main.html', context=context)  # render the html with the context
     return HttpResponse(response)
@@ -35,7 +34,7 @@ class SubmissionsView(View):
         user = User.objects.get(pk=1)  # Bagansio ^^
         now = datetime.datetime.now()
         #to create testing submissions
-        #submission = Submission(title="AO Owo", url="https://stackoverflow.com/", text="Yepa", created_at=now, author=user)
+        #submission = Submission(title="Yepa    ", url="https://stackoverflow.com/", text="Yepa", created_at=now, author=user)
         #submission.save()
 
         context = {

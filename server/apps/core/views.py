@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from ..accounts.models import User
@@ -27,11 +27,14 @@ def news(request):
     }
     response = render(request, 'core/main.html', context=context)  # render the html with the context
     return HttpResponse(response)
+
+
 class SubmissionsView(View):
 
+    user = User.objects.get(pk=1)  # Bagansio ^^
 
     def get(self,request, *args, **kwargs):
-        user = User.objects.get(pk=1)  # Bagansio ^^
+
         now = datetime.datetime.now()
         #to create testing submissions
         #submission = Submission(title="Yepa    ", url="https://stackoverflow.com/", text="Yepa", created_at=now, author=user)
@@ -39,13 +42,21 @@ class SubmissionsView(View):
 
         context = {
             'submit_form': SubmissionForm(),
-            'user': user
+            'user': self.user
         }
         response = render(request, 'core/submit.html', context=context)  # render the html with the context
         return HttpResponse(response)
 
 
-
-
+    def post(self,request,*args,**kwargs):
+        submission_form = SubmissionForm(request.POST)
+        status = 404
+        if submission_form.is_valid():
+            data = submission_form.cleaned_data
+            new_submission = Submission(title=data['title'], url=data['url'], text=data['text'], author=self.user, created_at=datetime.datetime.now())
+            new_submission.save()
+            print(new_submission)
+            status = 200
+        return redirect('news')
 
 

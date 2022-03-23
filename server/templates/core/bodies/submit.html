@@ -1,0 +1,20 @@
+
+
+<body cz-shortcut-listen="true">
+    {% load static %}
+    <div class="center">
+      <table id="hnmain"  cellspacing="0" cellpadding="0" bgcolor="#f6f6ef">
+        <tbody>
+        {% include "core/header.html" with header_type='submit'%}
+        <tr id="pagespace" />
+        <tr>
+          <form action="" method="post">
+            {% csrf_token %}
+          {{ submit_form }}
+          <input type="submit" value="submit" />
+          </form>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+</body>

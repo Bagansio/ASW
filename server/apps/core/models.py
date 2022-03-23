@@ -14,3 +14,6 @@ class Submission(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+
+    def __str__(self):
+        return 'id: ' + str(self.id) + ' title: ' + str(self.title)

@@ -52,10 +52,7 @@ class SubmissionsView(View):
         submission_form = SubmissionForm(request.POST)
         status = 404
         if submission_form.is_valid():
-            data = submission_form.cleaned_data
-            new_submission = Submission(title=data['title'], url=data['url'], text=data['text'], author=self.user, created_at=datetime.datetime.now())
-            new_submission.save()
-            print(new_submission)
+            submission_form.savedb(self.user)
             status = 200
         return redirect('news')
 

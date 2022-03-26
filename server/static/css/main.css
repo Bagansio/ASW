@@ -34,6 +34,8 @@ a:visited { color:#828282; text-decoration:none; }
     background-color: #ff6600;
 }
 
+
+
 .header-table {
     border: 0;
 
@@ -43,6 +45,10 @@ a:visited { color:#828282; text-decoration:none; }
 
 .center {
     text-align: center;
+}
+
+.center > * {
+    text-align: left;
 }
 
 .center > div, .center > table /* insert any other block-level elements here */ {

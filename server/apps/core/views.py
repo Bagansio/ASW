@@ -35,11 +35,6 @@ class SubmissionsView(View):
 
     def get(self,request, *args, **kwargs):
 
-        now = datetime.datetime.now()
-        #to create testing submissions
-        #submission = Submission(title="Yepa    ", url="https://stackoverflow.com/", text="Yepa", created_at=now, author=user)
-        #submission.save()
-
         context = {
             'submit_form': SubmissionForm(),
             'user': self.user

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
-from ..accounts.models import User
+from django.contrib.auth.models import User
 from .models import Submission
 from django.views import View
 from .forms import SubmissionForm
@@ -17,13 +17,12 @@ def news(request):
     #user.save()
 
 
-    user = User.objects.get(pk=1) #Bagansio ^^
+    user = request.user
     submissions = list(Submission.objects.all())
     #submissions = Submission.objects.get()
     now = datetime.datetime.now()
     context = {
         'submissions': submissions,
-        'user': user,
     }
     response = render(request, 'core/main.html', context=context)  # render the html with the context
     return HttpResponse(response)
@@ -31,23 +30,24 @@ def news(request):
 
 class SubmissionsView(View):
 
-    user = User.objects.get(pk=1)  # Bagansio ^^
 
     def get(self,request, *args, **kwargs):
 
         context = {
             'submit_form': SubmissionForm(),
-            'user': self.user
         }
         response = render(request, 'core/submit.html', context=context)  # render the html with the context
         return HttpResponse(response)
 
 
     def post(self,request,*args,**kwargs):
+
+        user = request.user
+
         submission_form = SubmissionForm(request.POST)
         status = 404
         if submission_form.is_valid():
-            submission_form.savedb(self.user)
+            submission_form.savedb(user)
             status = 200
         return redirect('news')
 

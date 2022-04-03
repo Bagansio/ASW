@@ -65,6 +65,19 @@ a:visited { color:#828282; text-decoration:none; }
     padding-right: 4px;
 }
 
+.account {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    cursor: pointer;
+
+
+}
+
+.forms {
+    display: inline-block;
+}
+
 
 .title a { word-break: break-word;}
 

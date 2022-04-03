@@ -25,6 +25,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "server.apps.accounts",
     "server.apps.core",
+
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -66,6 +71,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+
+                "django.template.context_processors.request",
             ],
         },
     },
@@ -103,6 +110,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+]
+
+
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    "github": {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        "APP": {
+            "client_id": config("GITHUB_CLIENT_ID"),
+            "secret": config("GITHUB_CLIENT_SECRET"),
+            "key": ""
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = '/'
 
 # ==============================================================================
 # I18N AND L10N SETTINGS

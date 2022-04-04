@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.template import loader
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import Submission
 from django.views import View
 from .forms import SubmissionForm
@@ -9,23 +8,16 @@ import datetime
 
 # Create your views here.
 
-def news(request):
-    # fetch date and time
 
-    # if you have empty the db and need  to create one
-    #user = User(username='Bagansio')
-    #user.save()
+class MainView(View):
 
-
-    user = request.user
-    submissions = list(Submission.objects.all())
-    #submissions = Submission.objects.get()
-    now = datetime.datetime.now()
-    context = {
-        'submissions': submissions,
-    }
-    response = render(request, 'core/main.html', context=context)  # render the html with the context
-    return HttpResponse(response)
+    def get(self,request, *args, **kwargs):
+        submissions = list(Submission.objects.all())
+        context = {
+            'submissions': submissions,
+        }
+        response = render(request, 'core/main.html', context=context)  # render the html with the context
+        return HttpResponse(response)
 
 
 class SubmissionsView(View):

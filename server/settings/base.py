@@ -135,7 +135,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+LOGIN_URL = "/"
+
 LOGIN_REDIRECT_URL = '/'
+
 
 # ==============================================================================
 # I18N AND L10N SETTINGS

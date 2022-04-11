@@ -9,7 +9,7 @@ class SubmissionForm(ModelForm):
 
     class Meta:
         model = Submission
-        exclude = ('created_at', 'author')
+        exclude = ('created_at', 'author', 'votes')
 
 
 

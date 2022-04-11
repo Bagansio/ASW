@@ -13,6 +13,10 @@ class MainView(View):
 
     def get(self,request, *args, **kwargs):
         submissions = list(Submission.objects.all())
+
+        for submission in submissions:
+            submission.count_votes()
+
         context = {
             'submissions': submissions,
         }

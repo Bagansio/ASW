@@ -35,7 +35,7 @@
               <tr>
                 <td colspan="2"/>
                 <td class="subtext">
-                  <span class="score" id="score_{{ submission.id }}">100 points</span>
+                  <span class="score" id="score_{{ submission.id }}">{{ submission.votes }} points</span>
                    by
                   <a href="" class="hnuser">{{ submission.author.username }}</a>
                   <span class="age" title="{{ submission.created_at }}">

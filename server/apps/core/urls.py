@@ -4,6 +4,8 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.MainView.as_view(), name='news'),
+    path('', views.HomeView.as_view(), name='news'),
     path('submit/', login_required(views.SubmissionsView.as_view()), name='submit'),
+    path('vote/<int:id>', login_required(views.voteView.as_view()), name='vote'),
+    path('unvote/<int:id>', login_required(views.voteView.as_view()), name='unvote')
 ]

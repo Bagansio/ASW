@@ -39,5 +39,9 @@ class Vote(models.Model):
         null=False
     )
 
+    class Meta:
+        unique_together = (("submission", "voter"),) #constraint to secure the votes
+
     def __unicode__(self):
         return f'{self.voter.username} voted {self.submission.title}'
+

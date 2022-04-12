@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Submission,Vote
 from django.views import View
 from .forms import SubmissionForm
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.decorators import login_required
 import datetime
 
@@ -36,15 +37,21 @@ class voteView(View):
 
 class HomeView(View):
 
+    def get_votes(self, user, submission):
+        if user.is_authenticated:
+            v = Vote.objects.filter(submission=submission)
+            return v.filter(voter=user)
+        return []
+
     def get(self,request, *args, **kwargs):
         user = request.user
         submissions = list(Submission.objects.all())
         votes = []
         for submission in submissions:
-            v = Vote.objects.filter(submission=submission)
-            v = v.filter(voter=user)
+            v = self.get_votes(user, submission)
             if len(v) != 0:
                 votes.append(submission.id)
+
             submission.count_votes()
 
         context = {

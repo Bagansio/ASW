@@ -9,7 +9,6 @@
           <td id="content">
             <table>
               <tbody>
-
               {% for submission in submissions %}
               <tr class="athing" id="{{ submission.id }}">
                 <td align="right" valign="top" class="title">
@@ -17,9 +16,22 @@
                 </td>
 
                 <td valign="top" class="votelinks">
-                  <a id="up_{{ submission.id }}" class="clicky" href="">
-                    <div class="votearrow" title="upvote"></div>
-                  </a>
+                  {% if user == submission.author %}
+                  <div style="color:red;"> *</div>
+
+                  {% else %}
+
+
+                    {% if submission.id in votes %}
+                      <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
+                    {% else %}
+                      <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
+                    {% endif %}
+                        <div class="votearrow" title="upvote"> </div>
+                    </a>
+
+
+                  {% endif %}
                 </td>
                 <td class="title">
                   <a href="{{ submission.url }}" class="titlelink">
@@ -41,6 +53,15 @@
                   <span class="age" title="{{ submission.created_at }}">
                     <a href=""> {{ submission.created_at|timesince }} ago </a>
                   </span>
+
+
+                  {% if submission.id in votes %}
+                  <span id="unv_{{ submission.id }}">
+                    |
+                    <a id="un_{{ submission.id }}" class="clicky" href="{% url 'unvote' submission.id %}">unvote</a>
+                  </span>
+                  {% endif %}
+
                 </td>
               </tr>
 

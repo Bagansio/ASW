@@ -58,7 +58,7 @@ class HomeView(View):
             'submissions': submissions,
             'votes': votes
         }
-        response = render(request, 'core/main.html', context=context)  # render the html with the context
+        response = render(request, 'core/home.html', context=context)  # render the html with the context
         return HttpResponse(response)
 
     #def post(self,request,*args,**kwargs):

@@ -1,13 +1,11 @@
-<body cz-shortcut-listen="true">
-    {% load static %}
-    <div class="center">
-      <table id="hnmain"  cellspacing="0" cellpadding="0" bgcolor="#f6f6ef">
-        <tbody>
-        {% include "core/header.html" with header_type='main' %}
-        <tr id="pagespace" />
-        <tr>
-          <td id="content">
-            <table>
+{% extends 'core/base.html' %}
+
+{% block navbar %}
+  {% include 'core/navbar/home.html' %}
+{% endblock %}
+
+{% block content %}
+ <table>
               <tbody>
               {% for submission in submissions %}
               <tr class="athing" id="{{ submission.id }}">
@@ -70,10 +68,4 @@
               {% endfor %}
               </tbody>
             </table>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-</body>
-</html>
+{% endblock %}

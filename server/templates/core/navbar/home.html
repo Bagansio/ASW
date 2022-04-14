@@ -1,0 +1,47 @@
+{% extends 'core/navbar/base.html' %}
+
+{% block insideNav %}
+  {% load socialaccount %}
+  <b class="hnname">
+  <a href="">Hacker News &ensp;</a>
+  </b>
+  <a href="">welcome</a>
+  |
+  <a href="">new</a>
+  |
+  <a href="">threads</a>
+  |
+  <a href="">past</a>
+  |
+  <a href="">comments</a>
+  |
+  <a href="">ask</a>
+  |
+  <a href="">show</a>
+  |
+  <a href="">jobs</a>
+  |
+  {% if user.is_authenticated %}
+    <a href="/submit">submit</a>
+  {% else %}
+     {% include 'core/navbar/login/login.html' with login_text='submit' %}
+  {% endif %}
+  </span>
+  </td>
+  <td class="login">
+  <span class="pagetop">
+
+
+  {% if user.is_authenticated %}
+
+     <a id="me" href="">{{ user.username }}</a>
+      (1) |
+
+    {% include 'core/navbar/login/logout.html' %}
+
+  {% else %}
+    {% include 'core/navbar/login/login.html' with login_text='Login' %}
+  {% endif %}
+  </span>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker news</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link type="text/css" href="{% static 'css/main.css' %}" rel="stylesheet"/>
+</head>
+<body cz-shortcut-listen="true">
+    {% load static %}
+    <div class="center">
+      <table id="hnmain"  cellspacing="0" cellpadding="0" bgcolor="#f6f6ef">
+        <tbody>
+        <tr>
+          {% block navbar %}
+          {% endblock %}
+        <tr id="pagespace" />
+        <tr>
+          <td id="content">
+            {% block content %}
+            {% endblock %}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+</body>
+</html>

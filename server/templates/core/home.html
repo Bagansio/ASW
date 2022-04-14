@@ -26,7 +26,7 @@
                       <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
                     {% endif %}
                         <div class="votearrow" title="upvote"> </div>
-                    </a>
+                      </a>
 
 
                   {% endif %}
@@ -58,8 +58,15 @@
                     |
                     <a id="un_{{ submission.id }}" class="clicky" href="{% url 'unvote' submission.id %}">unvote</a>
                   </span>
+                   |
                   {% endif %}
-
+                  <a href="{% url 'comments' submission.id %}">
+                    {% if submission.comments == 0 %}
+                     disscuss
+                    {% else %}
+                     {{ submission.comments }} comments
+                    {% endif %}
+                  </a>
                 </td>
               </tr>
 

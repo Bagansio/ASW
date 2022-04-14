@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "server.apps.core",
+    "server.apps.comments",
 
     "allauth",
     "allauth.account",

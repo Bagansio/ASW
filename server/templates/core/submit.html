@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block navbar %}
+  {% include 'core/navbar/submit.html' %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+              <table>
+                  {% csrf_token %}
+                  {% for field in submit_form.visible_fields %}
+                    <tr>
+                      <td>{{ field.label_tag }}</td>
+                      <td>
+                        {{  field.errors }}
+                        {{  field }}
+                        {{  field.help_text }}
+                      </td>
+                    </tr>
+                    {% if "url" in field.label_tag %}
+                    <tr>
+                      <td> </td>
+                      <td>
+                        <b>or</b>
+                      </td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                <tr>
+                  <td/>
+                  <td>
+                    <input type="submit" value="submit">
+                  </td>
+                </tr>
+                <tr>
+                    <td>
+                    <td>
+                      <br/>
+                      Leave url blank to submit a question for discussion. If there is no url, the text (if any) will appear at the top of the thread.
+                    </td>
+                </tr>
+              </table>
+            </form>
+{% endblock %}

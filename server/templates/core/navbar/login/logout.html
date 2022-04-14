@@ -1,9 +1,11 @@
   {% load socialaccount %}
 
-  <form method="post" action="{% provider_login_url "github" process="login" method="oauth2" %}">
+
+  <form class="forms" method="post" action="{% url 'account_logout' %}">
   {% csrf_token %}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
   {% endif %}
-  <button class="account" type="submit">Login</button>
+  <button class="account" type="submit">Logout</button>
   </form>
+

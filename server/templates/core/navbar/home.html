@@ -1,6 +1,7 @@
 {% extends 'core/navbar/base.html' %}
 
 {% block insideNav %}
+  {% load socialaccount %}
   <b class="hnname">
   <a href="">Hacker News &ensp;</a>
   </b>
@@ -20,17 +21,26 @@
   |
   <a href="">jobs</a>
   |
-  <a href="/submit">submit</a>
+  {% if user.is_authenticated %}
+    <a href="/submit">submit</a>
+  {% else %}
+     {% include 'core/navbar/login/login.html' with login_text='submit' %}
+  {% endif %}
   </span>
   </td>
   <td class="login">
   <span class="pagetop">
 
-  {% load socialaccount %}
+
   {% if user.is_authenticated %}
-    {% include 'core/navbar/login/login.html' %}
-  {% else %}
+
+     <a id="me" href="">{{ user.username }}</a>
+      (1) |
+
     {% include 'core/navbar/login/logout.html' %}
+
+  {% else %}
+    {% include 'core/navbar/login/login.html' with login_text='Login' %}
   {% endif %}
   </span>
 

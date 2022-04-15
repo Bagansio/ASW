@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.apps import apps
+from ..comments.models import Comment
+#Comments = apps.get_model('server.apps.comments', 'Comments')
+
 
 # Create your models here.
+
 
 class Submission(models.Model):
 
@@ -11,6 +16,7 @@ class Submission(models.Model):
     text = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(null=False)
     votes = models.IntegerField(null=True)
+    comments = models.IntegerField(null=True)
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL, #null because the post will exists if the user account is deleted
@@ -26,6 +32,10 @@ class Submission(models.Model):
 
     def count_votes(self):
         self.votes = Vote.objects.filter(submission=self).count()
+
+    def count_comments(self):
+        self.comments = Comment.objects.filter(submission=self).count()
+
 
 class Vote(models.Model):
     submission = models.ForeignKey(

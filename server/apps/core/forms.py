@@ -1,7 +1,9 @@
 from django.forms import ModelForm
 from django.core.exceptions import ValidationError
 from django.utils.timezone import make_aware
-import datetime
+from datetime import timedelta
+from django.utils import timezone
+
 from .models import Submission
 
 class SubmissionForm(ModelForm):
@@ -9,7 +11,7 @@ class SubmissionForm(ModelForm):
 
     class Meta:
         model = Submission
-        exclude = ('created_at', 'author', 'votes')
+        fields = ('title', 'url', 'text', )
 
 
 
@@ -23,11 +25,11 @@ class SubmissionForm(ModelForm):
 
 
     def savedb(self,author):
-        dt = datetime.datetime.now()
+        dt = timezone.now()
 
         submission = self.save(commit=False)
         submission.author = author
-        submission.created_at = make_aware(dt)
+        submission.created_at = timezone.now()
         submission.save()
 
 

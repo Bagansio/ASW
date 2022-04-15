@@ -1,0 +1,153 @@
+{% extends 'core/base.html' %}
+
+{% block navbar %}
+  {% include 'core/navbar/home.html' %}
+{% endblock %}
+
+{% block content %}
+  <table class="fatitem" border="0">
+    <tbody>
+      <tr class="athing" id="{{ submission.id }}">
+        <td align="right" valign="top" class="title">
+          <span class="rank"></span>
+        </td>
+        <td valign="top" class="votelinks">
+
+        {% if user == submission.author %}
+
+          <div style="color:red;"> *</div>
+
+        {% else %}
+
+
+          {% if voted %}
+            <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
+          {% else %}
+            <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
+          {% endif %}
+              <div class="votearrow" title="upvote"> </div>
+            </a>
+
+        {% endif %}
+
+      </td>
+      <td class="title">
+        <a href="" class="titlelink">{{ submission.title }}</a>
+      </td>
+      </tr>
+
+      <tr>
+        <td colspan="2"></td>
+        <td class="subtext">
+          <span class="score" id="score_{{ submission.id }}">{{ submission.votes }} points</span>
+           by
+          <a href="" class="hnuser">{{ submission.author }}</a>
+          <span class="age" title="{{ submission.created_at }}">
+            <a href="">{{ submission.created_at|timesince }} ago </a>
+          </span>
+
+          {% if voted %}
+            <span id="unv_{{ submission.id }}">
+              |
+              <a id="un_{{ submission.id }}" class="clicky" href="{% url 'unvote' submission.id %}">unvote</a>
+            </span>
+          {% endif %}
+        </td>
+      </tr>
+
+      <tr style="height:2px"></tr>
+
+
+
+          <form action="" method="post">
+            {% csrf_token %}
+            <tr>
+            <td colspan="2"></td>
+            {% for field in form.visible_fields %}
+            <td>
+              {{ field.errors }}
+              {{ field }}
+              {{ field.help_text }}
+            </td>
+            </tr>
+
+            <tr>
+              <td  colspan="2"/>
+              <td>
+              <input type="submit" value="add comment">
+              </td>
+            </tr>
+
+            {% endfor %}
+
+          </form>
+
+    </tbody>
+  </table>
+
+  <table border="0" class="comment-tree">
+    <tbody>
+      {% for comment in comments %}
+        <tr class="athing comtr" id="cm_{{comment.id}}">
+          <td>
+            <table border="0">
+              <tbody>
+                <tr>
+                  <td class="ind" indent="{{ comment.level }}"></td>
+
+
+                  <td valign="top" class="votelinks">
+
+                    {% if user == comment.author %}
+                    <div style="color:red;"> *</div>
+
+                    {% else %}
+
+
+                      {% if False %}
+                        <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
+                      {% else %}
+                        <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
+                      {% endif %}
+                          <div class="votearrow" title="upvote"> </div>
+                        </a>
+
+
+                    {% endif %}
+
+                  </td>
+
+
+                  <td class="default">
+                    <div style="margin-top:2px; margin-bottom-10px;">
+                      <span class="comhead">
+                        <a href="" class="hnuser">{{ comment.author }}</a>
+                        <span class="age" title="{{ comment.created_at }}">
+                           <a href="">{{ comment.created_at | timesince }} ago </a>
+                        </span>
+                      </span>
+                    </div>
+                    <br/>
+                    <div class="comment">
+                      <span class="comtext c00">
+                        {{ comment.text }}
+                        <br/>
+                        <div class="reply">
+                          <p>
+                              <u>
+                                <a href="">reply</a>
+                              </u>
+                          </p>
+                        </div>
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

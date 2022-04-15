@@ -21,4 +21,5 @@ urlpatterns = [
 
     path('', include('server.apps.core.urls')),
     path('accounts/', include("allauth.urls")),
+    path('comments/', include("server.apps.comments.urls")),
 ]

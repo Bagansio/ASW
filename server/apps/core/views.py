@@ -23,7 +23,7 @@ class voteView(View):
     def get(self,request,id, *args, **kwargs):
         user = request.user
         isVote = 'unvote' not in request.path
-        print(isVote)
+
         submission = Submission.objects.get(id=id)
         votes = Vote.objects.filter(submission=submission)
         v = votes.filter(voter=user)
@@ -31,7 +31,8 @@ class voteView(View):
             self.vote(v,submission,user)
         else:
             self.unvote(v)
-        return redirect('/')
+
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 
@@ -51,7 +52,7 @@ class HomeView(View):
             v = self.get_votes(user, submission)
             if len(v) != 0:
                 votes.append(submission.id)
-
+            submission.count_comments()
             submission.count_votes()
 
         context = {
@@ -81,10 +82,8 @@ class SubmissionsView(View):
         user = request.user
 
         submission_form = SubmissionForm(request.POST)
-        status = 404
         if submission_form.is_valid():
             submission_form.savedb(user)
-            status = 200
         return redirect('news')
 
 

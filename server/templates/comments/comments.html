@@ -94,7 +94,30 @@
               <tbody>
                 <tr>
                   <td class="ind" indent="{{ comment.level }}"></td>
-                  <td valign="top" class="votelinks">/\</td>
+
+
+                  <td valign="top" class="votelinks">
+
+                    {% if user == comment.author %}
+                    <div style="color:red;"> *</div>
+
+                    {% else %}
+
+
+                      {% if False %}
+                        <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
+                      {% else %}
+                        <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
+                      {% endif %}
+                          <div class="votearrow" title="upvote"> </div>
+                        </a>
+
+
+                    {% endif %}
+
+                  </td>
+
+
                   <td class="default">
                     <div style="margin-top:2px; margin-bottom-10px;">
                       <span class="comhead">
@@ -102,6 +125,20 @@
                         <span class="age" title="{{ comment.created_at }}">
                            <a href="">{{ comment.created_at | timesince }} ago </a>
                         </span>
+                      </span>
+                    </div>
+                    <br/>
+                    <div class="comment">
+                      <span class="comtext c00">
+                        {{ comment.text }}
+                        <br/>
+                        <div class="reply">
+                          <p>
+                              <u>
+                                <a href="">reply</a>
+                              </u>
+                          </p>
+                        </div>
                       </span>
                     </div>
                   </td>

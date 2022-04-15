@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import make_aware
 import datetime
 from .models import Comment
+from django.utils import timezone
+
 
 class CommentForm(ModelForm):
 
@@ -21,11 +23,10 @@ class CommentForm(ModelForm):
 
 
     def savedb(self,author,submission,level):
-        dt = datetime.datetime.now()
 
         comment = self.save(commit=False)
         comment.author = author
-        comment.created_at = make_aware(dt)
+        comment.created_at = timezone.now()
         comment.submission = submission
         comment.level = level
         comment.save()

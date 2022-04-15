@@ -31,7 +31,8 @@ class voteView(View):
             self.vote(v,submission,user)
         else:
             self.unvote(v)
-        return redirect('/')
+
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 

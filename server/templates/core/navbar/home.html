@@ -24,7 +24,7 @@
   {% if user.is_authenticated %}
     <a href="/submit">submit</a>
   {% else %}
-     {% include 'core/navbar/login/login.html' with login_text='submit' %}
+     {% include 'core/navbar/login/login.html' with login_text='submit' redirect_url='/submit/' %}
   {% endif %}
   </span>
   </td>

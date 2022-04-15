@@ -54,17 +54,34 @@
           {% endif %}
         </td>
       </tr>
+
       <tr style="height:2px"></tr>
-      <tr>
-        <td colspan="2"></td>
-        <td>
+
+
+
           <form action="" method="post">
             {% csrf_token %}
-            {{ form}}
-            <input type="submit" value="add comment">
+            <tr>
+            <td colspan="2"></td>
+            {% for field in form.visible_fields %}
+            <td>
+              {{ field.errors }}
+              {{ field }}
+              {{ field.help_text }}
+            </td>
+            </tr>
+
+            <tr>
+              <td  colspan="2"/>
+              <td>
+              <input type="submit" value="add comment">
+              </td>
+            </tr>
+
+            {% endfor %}
+
           </form>
-        </td>
-      </tr>
+
     </tbody>
   </table>
 
@@ -83,7 +100,7 @@
                       <span class="comhead">
                         <a href="" class="hnuser">{{ comment.author }}</a>
                         <span class="age" title="{{ comment.created_at }}">
-                           <a href=""> {{ comment.created_at|timesince }} ago </a>
+                           <a href="">{{ comment.created_at | timesince }} ago </a>
                         </span>
                       </span>
                     </div>

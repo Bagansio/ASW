@@ -4,7 +4,10 @@
   {% csrf_token %}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+
   {% endif %}
+
+  <input type="hidden" name="next" value="{{ redirect_url }}">
   <button class="account" type="submit">{{ login_text }}</button>
   </form>
 </div>

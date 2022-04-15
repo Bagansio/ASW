@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+
+{% block navbar %}
+  {% include 'core/navbar/custom.html' with title_nav='Add Comment' %}
+{% endblock %}
+
+{% block content %}
+  <table class="fatitem" border="0">
+    <tbody>
+      <tr class="athing" id="{{ comment.id }}">
+        <td class="ind"></td>
+        <td valign="top" class="votelinks"></td>
+        <td class="default">
+          <div style="margin-top:2px; margin-bottom:-10px;">
+            <span class="comhead">
+              <a href="" class="hnuser">{{ comment.author }}</a>
+              <span class="age" title="{{ comment.created_at }}">
+                <a href="{% url 'comments' comment.submission.id %}"> {{ comment.created_at|timesince}}</a>
+              </span>
+              <span class="navs"></span>
+              <span class="onstory">
+                 | on:
+                <a href="{% url 'comments' comment.submission.id %}">{{ comment.submission.title }}</a>
+              </span>
+            </span>
+          </div>
+          <br>
+          <div class="comment">
+            <span class="comtext c00">
+              {{ comment.text }}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr style="height:10px;"></tr>
+      <form action="" method="post">
+      {% csrf_token %}
+      <tr>
+      <td colspan="2"></td>
+      {% for field in form.visible_fields %}
+      <td>
+        {{ field.errors }}
+        {{ field }}
+        {{ field.help_text }}
+      </td>
+      </tr>
+
+      <tr>
+        <td  colspan="2"/>
+        <td>
+        <input type="submit" value="reply">
+        </td>
+      </tr>
+
+      {% endfor %}
+
+    </form>
+    </tbody>
+  </table>
+
+{% endblock %}

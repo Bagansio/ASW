@@ -57,8 +57,30 @@ class CommentsView(View):
 
         if form.is_valid():
             submission = Submission.objects.get(id=id)
-            form.savedb(user, submission, 0)
+            form.savedb(user, submission, 0, None)
         return redirect('comments', id=submission.id)
 
 
 
+class replyCommentView(View):
+
+    def get(self, request, id):
+        user = request.user
+
+        form = CommentForm()
+        comment = Comment.objects.get(id=id)
+
+        context = {
+            'form': form,
+            'comment': comment,
+        }
+        return render(request, 'comments/reply.html', context)
+
+    def post(self, request, id):
+        user = request.user
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = Comment.objects.get(id=id)
+            form.savedb(user, comment.submission, comment.level+1, comment)
+        return redirect('comments', id=comment.submission.id)

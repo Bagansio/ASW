@@ -20,13 +20,12 @@ class CommentForm(ModelForm):
             raise ValidationError("text can't be null")
         return cleaned_data
 
-
-
-    def savedb(self,author,submission,level):
+    def savedb(self, author, submission, level, parent):
 
         comment = self.save(commit=False)
         comment.author = author
         comment.created_at = timezone.now()
         comment.submission = submission
         comment.level = level
+        comment.parent = parent
         comment.save()

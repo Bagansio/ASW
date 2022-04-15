@@ -93,7 +93,9 @@
             <table border="0">
               <tbody>
                 <tr>
-                  <td class="ind" indent="{{ comment.level }}"></td>
+                  <td class="ind" indent="{{ comment.level }}">
+                    <div style="height:1px; width: {%  widthratio comment.level 1 40 %}px;"
+                  </td>
 
 
                   <td valign="top" class="votelinks">
@@ -135,7 +137,7 @@
                         <div class="reply">
                           <p>
                               <u>
-                                <a href="">reply</a>
+                                <a href="{% url 'reply' comment.id %}">reply</a>
                               </u>
                           </p>
                         </div>

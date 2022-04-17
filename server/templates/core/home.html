@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load filters %}
 
 {% block navbar %}
   {% include 'core/navbar/home.html' %}
@@ -13,24 +14,9 @@
                   <span class="rank">{{  forloop.counter }}.</span>
                 </td>
 
-                <td valign="top" class="votelinks">
-                  {% if user == submission.author %}
-                  <div style="color:red;"> *</div>
 
-                  {% else %}
+                {% include 'core/utils/vote.html' with vote_link='vote' item=submission item_voted=submission.id|is_voted:votes %}
 
-
-                    {% if submission.id in votes %}
-                      <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
-                    {% else %}
-                      <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
-                    {% endif %}
-                        <div class="votearrow" title="upvote"> </div>
-                      </a>
-
-
-                  {% endif %}
-                </td>
                 <td class="title">
                   <a href="{{ submission.url }}" class="titlelink">
                     {{  submission.title }}
@@ -52,13 +38,8 @@
                     <a href=""> {{ submission.created_at|timesince }} ago </a>
                   </span>
 
+                  {% include 'core/utils/unvote.html' with vote_link='unvote' item=submission item_voted=submission.id|is_voted:votes %}
 
-                  {% if submission.id in votes %}
-                  <span id="unv_{{ submission.id }}">
-                    |
-                    <a id="un_{{ submission.id }}" class="clicky" href="{% url 'unvote' submission.id %}">unvote</a>
-                  </span>
-                  {% endif %}
                    |
                   <a href="{% url 'comments' submission.id %}">
                     {% if submission.comments == 0 %}

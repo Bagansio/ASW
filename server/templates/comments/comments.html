@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load filters %}
 
 {% block navbar %}
   {% include 'core/navbar/home.html' %}
@@ -11,26 +12,9 @@
         <td align="right" valign="top" class="title">
           <span class="rank"></span>
         </td>
-        <td valign="top" class="votelinks">
 
-        {% if user == submission.author %}
+        {% include 'core/utils/vote.html' with vote_link='vote' item=submission item_voted=voted %}
 
-          <div style="color:red;"> *</div>
-
-        {% else %}
-
-
-          {% if voted %}
-            <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
-          {% else %}
-            <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
-          {% endif %}
-              <div class="votearrow" title="upvote"> </div>
-            </a>
-
-        {% endif %}
-
-      </td>
       <td class="title">
         <a href="" class="titlelink">{{ submission.title }}</a>
       </td>
@@ -46,12 +30,8 @@
             <a href="">{{ submission.created_at|timesince }} ago </a>
           </span>
 
-          {% if voted %}
-            <span id="unv_{{ submission.id }}">
-              |
-              <a id="un_{{ submission.id }}" class="clicky" href="{% url 'unvote' submission.id %}">unvote</a>
-            </span>
-          {% endif %}
+          {% include 'core/utils/unvote.html' with vote_link='unvote' item=submission item_voted=voted %}
+
         </td>
       </tr>
 
@@ -98,26 +78,7 @@
                   </td>
 
 
-                  <td valign="top" class="votelinks">
-
-                    {% if user == comment.author %}
-                    <div style="color:red;"> *</div>
-
-                    {% else %}
-
-
-                      {% if False %}
-                        <a id="up_{{ submission.id }}" class="nosee clicky" href="{% url 'vote' submission.id %}">
-                      {% else %}
-                        <a id="up_{{ submission.id }}" class="clicky" href="{% url 'vote' submission.id %}">
-                      {% endif %}
-                          <div class="votearrow" title="upvote"> </div>
-                        </a>
-
-
-                    {% endif %}
-
-                  </td>
+                  {% include 'core/utils/vote.html' with vote_link='voteComment' item=comment item_voted=comment.id|is_voted:votes %}
 
 
                   <td class="default">
@@ -127,6 +88,7 @@
                         <span class="age" title="{{ comment.created_at }}">
                            <a href="">{{ comment.created_at | timesince }} ago </a>
                         </span>
+                        {% include 'core/utils/unvote.html' with vote_link='unvoteComment' item=comment item_voted=comment.id|is_voted:votes %}
                       </span>
                     </div>
                     <br/>

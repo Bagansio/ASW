@@ -1,0 +1,11 @@
+{# unote_link (name of a view - string variable) #}
+{# item (submission or comment) #}
+{# item_voted (if its voted by user - boolean) item.id in votes#}
+
+
+{% if item_voted %}
+  <span id="unv_{{ item.id }}">
+  |
+  <a id="un_{{ item.id }}" class="clicky" href="{% url vote_link item.id %}">unvote</a>
+  </span>
+{% endif %}

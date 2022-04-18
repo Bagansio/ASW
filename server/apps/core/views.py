@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Submission,Vote
 from django.views import View
 from .forms import SubmissionForm
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
 
@@ -35,25 +35,33 @@ class voteView(View):
         return redirect(request.META.get('HTTP_REFERER'))
 
 
+def get_votes(user, submission):
+    if user.is_authenticated:
+        v = Vote.objects.filter(submission=submission)
+        return v.filter(voter=user)
+    return []
+
+
+def load_submission(user,submissions):
+
+    votes = []
+
+    for submission in submissions:
+        v = get_votes(user, submission)
+        if len(v) != 0:
+            votes.append(submission.id)
+        submission.count_comments()
+        submission.count_votes()
+
+    return votes
+
 
 class HomeView(View):
-
-    def get_votes(self, user, submission):
-        if user.is_authenticated:
-            v = Vote.objects.filter(submission=submission)
-            return v.filter(voter=user)
-        return []
 
     def get(self,request, *args, **kwargs):
         user = request.user
         submissions = list(Submission.objects.all())
-        votes = []
-        for submission in submissions:
-            v = self.get_votes(user, submission)
-            if len(v) != 0:
-                votes.append(submission.id)
-            submission.count_comments()
-            submission.count_votes()
+        votes = load_submission(user, submissions)
 
         context = {
             'submissions': submissions,
@@ -63,6 +71,30 @@ class HomeView(View):
         return HttpResponse(response)
 
     #def post(self,request,*args,**kwargs):
+
+
+class SubmittedView(View):
+
+    def get(self, request, username):
+        user = request.user
+
+        try:
+            user_searched = User.objects.get(username=username)
+
+        except Exception as e:
+            return HttpResponse('No such user.')
+
+        submissions = list(Submission.objects.filter(author=user_searched))
+
+        votes = load_submission(user, submissions)
+
+        context = {
+            'submissions': submissions,
+            'votes': votes
+        }
+        response = render(request, 'core/home.html', context=context)  # render the html with the context
+        return HttpResponse(response)
+
 
 
 class SubmissionsView(View):

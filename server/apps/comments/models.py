@@ -32,6 +32,10 @@ class Comment(models.Model):
     def count_votes(self):
         self.votes = CommentVotes.objects.filter(comment=self).count()
 
+    def auto_vote(self):
+        vote = CommentVotes(comment=self, voter=self.author)
+        vote.save()
+
 
 class CommentVotes(models.Model):
     comment = models.ForeignKey(

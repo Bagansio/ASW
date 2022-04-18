@@ -3,14 +3,15 @@ from django.http import HttpResponse
 from .models import Submission, Vote
 from django.views import View
 from .forms import SubmissionForm
+from ..comments.models import Comment
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 
 
 # util functions
 
 def get_votes(user, submission):
-    if user.is_authenticated:
+    if user.is_authenticated and user != submission.author:
         v = Vote.objects.filter(submission=submission)
         return v.filter(voter=user)
     return []
@@ -157,5 +158,22 @@ class SubmissionsView(View):
         if user.is_authenticated:
             submission_form = SubmissionForm(request.POST)
             if submission_form.is_valid():
-                submission_form.savedb(user)
+                url = submission_form.cleaned_data['url']
+                text = submission_form.cleaned_data['text']
+
+                if url is not None:
+                    url_submissions = Submission.objects.filter(url=url)
+
+                    if len(url_submissions) > 0: #exists another submission with url given
+                        return redirect('comments', id=url_submissions[0].id)
+
+                    if text is not None:
+                        submission = submission_form.urlSave(user)
+
+                        comment = Comment(author=user, submission=submission, text=text, created_at=timezone.now(), level=0)
+                        comment.save()
+                        return redirect('news')
+
+                submission_form.standardSave(user)
+
         return redirect('news')

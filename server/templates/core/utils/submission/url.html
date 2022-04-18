@@ -1,0 +1,13 @@
+{% extends 'core/utils/submission/base.html' %}
+{% load filters %}
+
+{% block submission_type %}
+    <a href="{{ submission.url }}" class="titlelink">
+      {{  submission.title }}
+    </a>
+    <span class="sitebit comhead">
+       (
+      <a href="{{ submission.url }}"> <span class="sitestr">{{ submission.url|pretty_url }}</span></a>
+      )
+    </span>
+{% endblock %}

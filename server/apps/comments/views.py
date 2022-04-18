@@ -35,7 +35,7 @@ class voteView(View):
 
 def get_voted(user, submission):
 
-    if user.is_authenticated:
+    if user.is_authenticated and user != submission.author:
         votes = Vote.objects.filter(submission=submission).filter(voter=user)
         if len(votes) != 0:
             return True

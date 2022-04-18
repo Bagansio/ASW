@@ -1,0 +1,7 @@
+{% extends 'core/utils/submission/base.html' %}
+
+{% block submission_type %}
+    <a href="{% url 'comments' submission.id %}" class="titlelink">
+      Ask HN: {{  submission.title }}
+    </a>
+{% endblock %}

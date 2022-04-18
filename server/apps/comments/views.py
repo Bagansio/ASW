@@ -91,7 +91,7 @@ class CommentsView(View):
 
         user = request.user
 
-        if not user.is_authenticated:
+        if user.is_authenticated:
 
             form = CommentForm(request.POST)
 
@@ -99,7 +99,7 @@ class CommentsView(View):
                 submission = Submission.objects.get(id=id)
                 form.savedb(user, submission, 0, None)
 
-        return redirect('comments', id=submission.id)
+        return redirect('comments', id=id)
 
 
 

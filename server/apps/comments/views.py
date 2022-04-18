@@ -57,7 +57,7 @@ class CommentsView(View):
             comments.append(child)
 
     def get_votes(self, user, comment):
-        if user.is_authenticated:
+        if user.is_authenticated and user != comment.author:
             v = CommentVotes.objects.filter(comment=comment).filter(voter=user)
             return len(v) != 0
         return False

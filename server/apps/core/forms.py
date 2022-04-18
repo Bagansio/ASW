@@ -42,6 +42,7 @@ class SubmissionForm(ModelForm):
 
         submission.author = author
         submission.created_at = timezone.now()
+        submission.votes = 1
         submission.save()
         submission.auto_vote()
 

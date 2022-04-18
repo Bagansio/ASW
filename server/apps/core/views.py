@@ -91,15 +91,17 @@ class voteView(View):
 
     def get(self, request, id, *args, **kwargs):
         user = request.user
-        isVote = 'unvote' not in request.path
 
-        submission = Submission.objects.get(id=id)
-        votes = Vote.objects.filter(submission=submission)
-        v = votes.filter(voter=user)
-        if isVote:
-            self.vote(v, submission, user)
-        else:
-            self.unvote(v)
+        if user.is_authenticated:
+            isVote = 'unvote' not in request.path
+
+            submission = Submission.objects.get(id=id)
+            votes = Vote.objects.filter(submission=submission)
+            v = votes.filter(voter=user)
+            if isVote:
+                self.vote(v, submission, user)
+            else:
+                self.unvote(v)
 
         return redirect(request.META.get('HTTP_REFERER'))
 
@@ -152,7 +154,8 @@ class SubmissionsView(View):
     def post(self, request, *args, **kwargs):
         user = request.user
 
-        submission_form = SubmissionForm(request.POST)
-        if submission_form.is_valid():
-            submission_form.savedb(user)
+        if user.is_authenticated:
+            submission_form = SubmissionForm(request.POST)
+            if submission_form.is_valid():
+                submission_form.savedb(user)
         return redirect('news')

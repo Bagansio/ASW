@@ -1,0 +1,28 @@
+{% load socialaccount %}
+
+<form method="post" action="{% provider_login_url "github" process="login" method="oauth2" %}">
+  {% csrf_token %}
+  {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+  {% endif %}
+  <tr>
+  <td colspan="2"></td>
+  {% for field in form.visible_fields %}
+  <td>
+    {{ field.errors }}
+    {{ field }}
+    {{ field.help_text }}
+  </td>
+  </tr>
+
+  <tr>
+    <td  colspan="2"/>
+    <td>
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <input type="submit" value="{{ button_text }}">
+    </td>
+  </tr>
+
+  {% endfor %}
+
+</form>

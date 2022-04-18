@@ -40,7 +40,7 @@
     {% include 'core/navbar/login/logout.html' %}
 
   {% else %}
-    {% include 'core/navbar/login/login.html' with login_text='Login' %}
+    {% include 'core/navbar/login/login.html' with login_text='Login' redirect_url=request.path %}
   {% endif %}
   </span>
 

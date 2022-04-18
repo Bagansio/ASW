@@ -33,28 +33,11 @@
         </td>
       </tr>
       <tr style="height:10px;"></tr>
-      <form action="" method="post">
-      {% csrf_token %}
-      <tr>
-      <td colspan="2"></td>
-      {% for field in form.visible_fields %}
-      <td>
-        {{ field.errors }}
-        {{ field }}
-        {{ field.help_text }}
-      </td>
-      </tr>
-
-      <tr>
-        <td  colspan="2"/>
-        <td>
-        <input type="submit" value="reply">
-        </td>
-      </tr>
-
-      {% endfor %}
-
-    </form>
+      {% if user.is_authenticated %}
+        {% include 'comments/utils/form.html' with button_text='reply' %}
+      {% else %}
+        {% include 'comments/utils/loginForm.html'  with button_text='reply' %}
+      {% endif %}
     </tbody>
   </table>
 

@@ -4,20 +4,39 @@
 
 <td valign="top" class="votelinks">
   {% load socialaccount %}
-  {% if user == item.author %}
-  <div style="color:red;"> *</div>
+  {% if user.is_authenticated %}
+    {% if user == item.author %}
+    <div style="color:red;"> *</div>
 
+    {% else %}
+
+
+    {% if item_voted %}
+    <a id="up_{{ item.id }}" class="nosee clicky" href="{% url vote_link item.id %}">
+    {% else %}
+        <a id="up_{{ item.id }}" class="clicky" href="{% url vote_link item.id %}">
+    {% endif %}
+      <div class="votearrow" title="upvote"> </div>
+    </a>
+
+
+    {% endif %}
   {% else %}
+      {# custom login for vote #}
+      <div style="display:inline-block;">
+        <form method="post" action="{% provider_login_url "github" process="login" method="oauth2" %}">
+        {% csrf_token %}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
 
+        {% endif %}
 
-  {% if item_voted %}
-  <a id="up_{{ item.id }}" class="nosee clicky" href="{% url vote_link item.id %}">
-  {% else %}
-      <a id="up_{{ item.id }}" class="clicky" href="{% url vote_link item.id %}">
-  {% endif %}
-  <div class="votearrow" title="upvote"> </div>
-  </a>
-
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button class="account clicky" type="submit">
+          <div class="votearrow" title="upvote"> </div>
+        </button>
+        </form>
+      </div>
 
   {% endif %}
 </td>

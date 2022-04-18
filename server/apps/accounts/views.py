@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 
+# profile/<username> view
 
 
 class ProfileView(View):
@@ -18,7 +19,7 @@ class ProfileView(View):
         except Exception as e:
             return response
 
-        if user==user_searched:
+        if user == user_searched:
             #usuario logeado
             print("not implemented")
         else:

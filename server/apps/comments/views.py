@@ -90,11 +90,15 @@ class CommentsView(View):
     def post(self, request, id):
 
         user = request.user
-        form = CommentForm(request.POST)
 
-        if form.is_valid():
-            submission = Submission.objects.get(id=id)
-            form.savedb(user, submission, 0, None)
+        if not user.is_authenticated:
+
+            form = CommentForm(request.POST)
+
+            if form.is_valid():
+                submission = Submission.objects.get(id=id)
+                form.savedb(user, submission, 0, None)
+
         return redirect('comments', id=submission.id)
 
 
@@ -113,8 +117,12 @@ class replyCommentView(View):
         }
         return render(request, 'comments/reply.html', context)
 
+
     def post(self, request, id):
+
         user = request.user
+
+
         form = CommentForm(request.POST)
 
         if form.is_valid():

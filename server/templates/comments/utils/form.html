@@ -1,0 +1,22 @@
+<form action="" method="post">
+  {% csrf_token %}
+  <tr>
+  <td colspan="2"></td>
+  {% for field in form.visible_fields %}
+  <td>
+    {{ field.errors }}
+    {{ field }}
+    {{ field.help_text }}
+  </td>
+  </tr>
+
+  <tr>
+    <td  colspan="2"/>
+    <td>
+    <input type="submit" value="{{ button_text }}">
+    </td>
+  </tr>
+
+  {% endfor %}
+
+</form>

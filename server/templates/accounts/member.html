@@ -11,9 +11,7 @@
       <td style="vert-align: top;">
         user:
       </td>
-      <td timestamp="{{ user_searched.username }}">
-        <a href="{% url 'profile' user_searched.username %}" class="hnuser"> {{ user_searched.username }} </a>
-      </td>
+      {% include 'accounts/utils/user.html' with user_searched=user_searched %}
     </tr>
     <tr >
       <td style="vert-align: top;">

@@ -13,7 +13,7 @@
         <td class="default">
           <div style="margin-top:2px; margin-bottom:-10px;">
             <span class="comhead">
-              <a href="" class="hnuser">{{ comment.author }}</a>
+              <a href="{% url 'profile' comment.author %}" class="hnuser">{{ comment.author }}</a>
               <span class="age" title="{{ comment.created_at }}">
                 <a href="{% url 'comments' comment.submission.id %}"> {{ comment.created_at|timesince}}</a>
               </span>

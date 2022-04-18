@@ -33,7 +33,7 @@
                 <td class="subtext">
                   <span class="score" id="score_{{ submission.id }}">{{ submission.votes }} points</span>
                    by
-                  <a href="" class="hnuser">{{ submission.author.username }}</a>
+                  <a href="{% url 'profile' submission.author %}" class="hnuser"> {{ submission.author }} </a>
                   <span class="age" title="{{ submission.created_at }}">
                     <a href=""> {{ submission.created_at|timesince }} ago </a>
                   </span>

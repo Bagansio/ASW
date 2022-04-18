@@ -167,7 +167,7 @@ class SubmissionsView(View):
                     if len(url_submissions) > 0: #exists another submission with url given
                         return redirect('comments', id=url_submissions[0].id)
 
-                    if text is not None:
+                    if text != "":
                         submission = submission_form.urlSave(user)
 
                         comment = Comment(author=user, submission=submission, text=text, created_at=timezone.now(), level=0)

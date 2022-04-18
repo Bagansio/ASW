@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% block navbar %}
+  {% include 'core/navbar/home.html' %}
+{% endblock %}
+
+{% block content %}
+<table style="border:0px;">
+  <tbody>
+    <tr class="athing">
+      <td style="vert-align: top;">
+        user:
+      </td>
+      <td timestamp="{{ user_searched.username }}">
+        <a href="{% url 'profile' user_searched.username %}" class="hnuser"> {{ user_searched.username }} </a>
+      </td>
+    </tr>
+    <tr >
+      <td style="vert-align: top;">
+        created:
+      </td>
+      <td >
+        {{ user_searched.date_joined }}
+      </td>
+    </tr>
+    <tr >
+      <td style="vert-align: top;">
+        about:
+      </td>
+      <td style="overflow: hidden;"></td>
+    </tr>
+    <tr >
+      <td ></td>
+      <td >
+        <a href="{% url 'submitted' user_searched.username %}"> <u>submissions</u> </a>
+      </td>
+    </tr>
+    <tr >
+      <td ></td>
+      <td >
+        <a href="{% url 'submitted' user_searched.username %}"> <u>comments</u> </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

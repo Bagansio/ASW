@@ -1,6 +1,5 @@
 # flake8: noqa
 
-import sentry_sdk
 from whitenoise import WhiteNoise
 
 import server

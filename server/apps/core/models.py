@@ -16,7 +16,7 @@ class Submission(models.Model):
     url = models.URLField(max_length=200, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(null=False)
-    votes = models.IntegerField(null=True)
+    votes = models.BigIntegerField(null=True)
     comments = models.IntegerField(null=True)
     author = models.ForeignKey(
         User,

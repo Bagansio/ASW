@@ -20,6 +20,7 @@ oauthlib==3.2.0
 parso==0.7.1
 pickleshare==0.7.5
 prompt-toolkit==3.0.29
+psycopg2==2.9.3
 pycparser==2.21
 Pygments==2.11.2
 PyJWT==2.3.0

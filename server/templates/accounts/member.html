@@ -21,6 +21,7 @@
         {{ user_searched.date_joined }}
       </td>
     </tr>
+    {% block profile %}
     <tr >
       <td style="vert-align: top;">
         about:
@@ -39,6 +40,7 @@
         <a href="{% url 'threads' user_searched.username %}"> <u>comments</u> </a>
       </td>
     </tr>
+    {% endblock %}
   </tbody>
 </table>
 {% endblock %}

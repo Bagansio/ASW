@@ -10,6 +10,6 @@ urlpatterns = [
     path('unvote/<int:id>', login_required(views.voteView.as_view()), name='unvoteComment'),
 
     path('threads/<str:username>', views.ThreadsView.as_view(), name='threads'),
-    path('upvoted/<str:username>', views.UpvotedView.as_view(), name='upvoted'),
+    path('upvoted/<str:username>', views.UpvotedView.as_view(), name='upvotedComments'),
 
 ]

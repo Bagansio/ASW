@@ -1,7 +1,7 @@
 # flake8: noqa
 
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+from whitenoise import WhiteNoise
 
 import server
 from .base import *
@@ -22,6 +22,10 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SESSION_COOKIE_SECURE = True
 
+
+MIDDLEWARE_CLASSES = ('whitenoise.middleware.WhiteNoiseMiddleware',)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
 
 # ==============================================================================
 # THIRD-PARTY APPS SETTINGS

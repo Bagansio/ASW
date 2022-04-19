@@ -26,10 +26,10 @@ SESSION_COOKIE_SECURE = True
 # ==============================================================================
 # THIRD-PARTY APPS SETTINGS
 # ==============================================================================
-
+'''
 sentry_sdk.init(
     dsn=config("SENTRY_DSN", default=""),
     environment=SERVER_ENVIRONMENT,
     release="server@%s" % server.__version__,
     integrations=[DjangoIntegration()],
-)
+) '''

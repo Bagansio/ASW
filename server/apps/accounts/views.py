@@ -25,7 +25,7 @@ class ProfileView(View):
             #usuario logeado
             profile = self.getProfile(user)
 
-            print(ProfileForm())
+
             context = {
                 'form': ProfileForm(initial={'about': profile.about,
                                              'email': profile.email,
@@ -49,6 +49,7 @@ class ProfileView(View):
         return HttpResponse(response)
 
     def post(self, request, username):
+
         user=request.user
         try:
             user_searched = Profile.objects.get(user=user)
@@ -60,7 +61,9 @@ class ProfileView(View):
         form = ProfileForm(request.POST)
         if form.is_valid():
             form.savedb(user_searched)
-            return redirect('profile',username=username)
+
+        return redirect('profile',username=username)
+
 
     def getProfile(self,user):
         try:

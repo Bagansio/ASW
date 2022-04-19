@@ -172,7 +172,8 @@ class UpvotedView(View):
         for vote in votes:
             vote.submission.count_comments()
             vote.submission.count_votes()
-            submissions.append(vote.submission)
+            if vote.voter != vote.submission.author:
+                submissions.append(vote.submission)
 
         context = {
             'submissions': submissions,

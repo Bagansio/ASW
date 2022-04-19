@@ -23,7 +23,7 @@ SESSION_COOKIE_SECURE = True
 
 
 MIDDLEWARE_CLASSES = ('whitenoise.middleware.WhiteNoiseMiddleware',)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
 
 prod_db = dj_database_url.config(conn_max_age=500)

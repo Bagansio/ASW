@@ -81,7 +81,6 @@ class CommentsView(View):
         submission.count_votes()
         submission.count_comments()
 
-        print(submission.text)
         voted = get_voted(user, submission)
         comments = []
         votes = []

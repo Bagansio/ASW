@@ -72,10 +72,16 @@ class CommentsView(View):
         user = request.user
 
         form = CommentForm()
-        submission = Submission.objects.get(id=id)
+        try:
+            submission = Submission.objects.get(id=id)
+
+        except Exception as e:
+            return HttpResponse('No such item.')
+
         submission.count_votes()
         submission.count_comments()
 
+        print(submission.text)
         voted = get_voted(user, submission)
         comments = []
         votes = []

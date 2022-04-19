@@ -35,6 +35,11 @@
         </td>
       </tr>
 
+       <tr>
+                <td colspan="2"></td>
+                <td> {{ submission.text }}</td>
+              </tr>
+
       <tr style="height:2px"></tr>
 
 
@@ -43,7 +48,6 @@
           {% else %}
             {% include 'comments/utils/loginForm.html'  with button_text='add comment' %}
           {% endif %}
-
 
 
     </tbody>

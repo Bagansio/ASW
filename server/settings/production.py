@@ -23,8 +23,12 @@ SESSION_COOKIE_SECURE = True
 
 
 MIDDLEWARE_CLASSES = ('whitenoise.middleware.WhiteNoiseMiddleware',)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_ALLOW_ALL_ORIGINS = True
 
 prod_db = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)

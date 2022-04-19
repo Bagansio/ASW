@@ -7,14 +7,14 @@
 
 {% block content %}
  <table>
-              <tbody>
-              {% for submission in submissions %}
-                {% if submission|is_url %}
-                  {% include 'core/utils/submission/url.html' %}
-                {% else %}
-                  {% include 'core/utils/submission/ask.html' %}
-                {% endif %}
-              {% endfor %}
-              </tbody>
-            </table>
+    <tbody>
+      {% for submission in submissions %}
+        {% if submission|is_url %}
+          {% include 'core/utils/submission/url.html' %}
+        {% else %}
+          {% include 'core/utils/submission/ask.html' %}
+        {% endif %}
+      {% endfor %}
+      </tbody>
+ </table>
 {% endblock %}

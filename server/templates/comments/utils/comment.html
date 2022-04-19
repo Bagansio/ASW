@@ -1,0 +1,55 @@
+{% load filters %}
+
+{% for comment in comments %}
+  <tr class="athing comtr" id="cm_{{comment.id}}">
+    <td>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td class="ind" indent="{{ comment.level }}">
+              <div style="height:1px; width: {%  widthratio comment.level 1 40 %}px;"></div>
+            </td>
+
+
+            {% include 'core/utils/vote.html' with vote_link='voteComment' item=comment item_voted=comment.id|is_voted:votes %}
+
+
+            <td class="default">
+              <div style="margin-top:2px; margin-bottom-10px;">
+                <span class="comhead">
+                  <a href="{% url 'profile' comment.author %}" class="hnuser"> {{ comment.author }} </a>
+                  <span class="age" title="{{ comment.created_at }}">
+                     <a href="">{{ comment.created_at | timesince }} ago </a>
+                  </span>
+                  {% include 'core/utils/unvote.html' with vote_link='unvoteComment' item=comment item_voted=comment.id|is_voted:votes %}
+                </span>
+                <span class="navs">
+                  {% block custom %}
+                  {% endblock %}
+                </span>
+              </div>
+              <br/>
+              <div class="comment">
+                <span class="comtext c00">
+                  {{ comment.text }}
+                  <br/>
+                  <div class="reply">
+                    <p>
+                        <u>
+                          {% if user.is_authenticated %}
+                            <a href="{% url 'reply' comment.id %}">reply</a>
+                          {% else %}
+                            {% include 'core/navbar/login/login.html' with custom_style='text-decoration:underline;' login_text='reply' redirect_url=request.path %}
+                          {% endif %}
+                        </u>
+                    </p>
+                  </div>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+{% endfor %}

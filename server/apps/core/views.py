@@ -37,7 +37,7 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        submissions = list(Submission.objects.all())
+        submissions = list(Submission.objects.all().order_by('-votes'))
         votes = load_submission(user, submissions)
 
         context = {
@@ -48,6 +48,44 @@ class HomeView(View):
         return HttpResponse(response)
 
     # def post(self,request,*args,**kwargs):
+
+
+#newest/ view
+
+
+class NewestView(View):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        submissions = list(Submission.objects.all().order_by('-created_at'))
+        votes = load_submission(user, submissions)
+
+        context = {
+            'submissions': submissions,
+            'votes': votes
+        }
+        response = render(request, 'core/home.html', context=context)  # render the html with the context
+        return HttpResponse(response)
+
+
+#ask/ view
+
+
+class AskView(View):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        submissions = list(Submission.objects.filter(url=None).order_by('-votes'))
+        votes = load_submission(user, submissions)
+
+        context = {
+            'submissions': submissions,
+            'votes': votes
+        }
+        response = render(request, 'core/home.html', context=context)  # render the html with the context
+        return HttpResponse(response)
+
+
 
 
 # submitted/username view
@@ -81,14 +119,18 @@ class SubmittedView(View):
 
 class voteView(View):
 
-    def unvote(self, vote):
+    def unvote(self, vote, submission):
         if len(vote) != 0:
             vote.delete()
+            submission.votes = int(submission.votes) - 1
+            submission.save()
 
     def vote(self, v, submission, user):
         if len(v) == 0:
             v = Vote(voter=user, submission=submission)
             v.save()
+            submission.votes = int(submission.votes) + 1
+            submission.save()
 
     def get(self, request, id, *args, **kwargs):
         user = request.user
@@ -102,7 +144,7 @@ class voteView(View):
             if isVote:
                 self.vote(v, submission, user)
             else:
-                self.unvote(v)
+                self.unvote(v, submission)
 
         return redirect(request.META.get('HTTP_REFERER'))
 
@@ -176,4 +218,4 @@ class SubmissionsView(View):
 
                 submission_form.standardSave(user)
 
-        return redirect('news')
+        return redirect('newest')

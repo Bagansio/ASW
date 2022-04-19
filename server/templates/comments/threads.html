@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% load filters %}
+
+{% block navbar %}
+  {% include 'core/navbar/home.html' %}
+{% endblock %}
+
+{% block content %}
+ <table>
+    <tbody>
+      {% include 'comments/utils/threadsComment.html' with votes=votes %}
+    </tbody>
+ </table>
+{% endblock %}

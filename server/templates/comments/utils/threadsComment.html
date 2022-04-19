@@ -1,0 +1,10 @@
+{% extends 'comments/utils/comment.html' %}
+
+{% block custom %}
+  |
+  <a href="{% url 'comments' comment.submission.id %}">context</a>
+  <span class="onstory">
+     | on:
+    <a href="{% url 'comments' comment.submission.id %}">{{comment.submission.title}}</a>
+  </span>
+{% endblock %}

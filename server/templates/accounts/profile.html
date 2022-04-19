@@ -1,0 +1,52 @@
+{% extends 'accounts/member.html' %}
+{% block profile %}
+
+
+<form method ='post'>
+  {% csrf_token %}
+  {% for field in form.visible_fields %}
+    <tr >
+      <td style="vert-align: top;">
+        {{ field.label_tag }}
+      </td>
+      <td >
+        {{ field }}
+        {{ field.errors }}
+        {{ field.help_text }}
+      </td>
+    </tr>
+  {% endfor %}
+   <tr >
+      <td ></td>
+      <td >
+        <a href="{% url 'submitted' user_searched.username %}"> <u>submissions</u> </a>
+      </td>
+ </tr>
+
+<tr >
+      <td ></td>
+      <td >
+        <a href="{% url 'threads' user_searched.username %}"> <u>comments</u> </a>
+      </td>
+</tr>
+
+<tr >
+      <td ></td>
+      <td >
+        <a href="{% url 'upvoted' user_searched.username %}"> <u>upvoted submisions</u> </a>
+          /
+         <a href="{% url 'upvotedComments' user_searched.username %}"> <u>comments</u> </a>
+          (private)
+      </td>
+</tr>
+  <tr >
+    <td >
+     <input type="submit" value = "Update">
+    </td >
+  </tr>
+</form>
+
+
+
+
+{% endblock %}

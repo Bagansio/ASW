@@ -39,8 +39,10 @@ class ProfileView(View):
             }
             return render(request, 'accounts/profile.html', context)
         else:
+            profile = self.getProfile(user)
             # usuario member
             context = {
+                'profile': profile,
                 'user_searched': user_searched,
             }
 

@@ -37,7 +37,9 @@
 
        <tr>
           <td colspan="2"></td>
-          <td> {{ submission.text }}</td>
+          {% if submission.text is not None %}
+          <td> {{ submission.text }}
+         {% endif %}
         </tr>
 
       <tr style="height:2px"></tr>

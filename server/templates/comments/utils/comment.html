@@ -31,7 +31,9 @@
               <br/>
               <div class="comment">
                 <span class="comtext c00">
-                  {{ comment.text }}
+                  {% if comment.text is not None %}
+                    {{ comment.text }}
+                  {% endif %}
                   <br/>
                   <div class="reply">
                     <p>

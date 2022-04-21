@@ -26,6 +26,11 @@
       <td style="vert-align: top;">
         about:
       </td>
+      {% if profile.about is not None %}
+      <td>
+        {{ profile.about }}
+      </td>
+      {% endif %}
       <td style="overflow: hidden;"></td>
     </tr>
     <tr >

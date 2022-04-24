@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     # api rest
 
     "rest_framework",
-    "rest_framework_api_key",
+    "rest_framework.authtoken",
+    "drf_yasg",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -201,3 +202,16 @@ MEDIA_ROOT = BASE_DIR.parent.parent / "media"
 # ==============================================================================
 
 SERVER_ENVIRONMENT = config("SERVER_ENVIRONMENT", default="local")
+
+
+# ==============================================================================
+# API SETTINGS
+# ==============================================================================
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ]
+}
+
+

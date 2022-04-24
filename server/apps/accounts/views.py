@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from .forms import ProfileForm
 from .models import Profile
-
+from rest_framework.authtoken.models import Token
 
 # profile/<username> view
 
@@ -24,7 +24,7 @@ class ProfileView(View):
         if user == user_searched:
             #usuario logeado
             profile = self.getProfile(user)
-
+            token = Token.objects.get(user=user)
 
             context = {
                 'form': ProfileForm(initial={'about': profile.about,
@@ -35,6 +35,7 @@ class ProfileView(View):
                                              'minaway': profile.minaway,
                                              'delay': profile.delay,}),
                 'user_searched': user_searched,
+                'token': token,
 
             }
             return render(request, 'accounts/profile.html', context)
@@ -44,6 +45,7 @@ class ProfileView(View):
             context = {
                 'profile': profile,
                 'user_searched': user_searched,
+
             }
 
             response = render(request, 'accounts/member.html', context=context)  # render the html with the context

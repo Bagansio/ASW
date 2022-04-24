@@ -215,7 +215,7 @@ class SubmissionsView(View):
 
                         comment = Comment(author=user, submission=submission, text=text, created_at=timezone.now(), level=0)
                         comment.save()
-                        return redirect('news')
+                        return redirect('newest')
 
                 submission_form.standardSave(user)
 

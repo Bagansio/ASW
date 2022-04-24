@@ -15,4 +15,5 @@ urlpatterns = [
     path('vote/<int:id>', login_required(views.voteView.as_view()), name='vote'),
     path('unvote/<int:id>', login_required(views.voteView.as_view()), name='unvote'),
     path('upvoted/<str:username>', views.UpvotedView.as_view(), name='upvoted'),
+
 ]

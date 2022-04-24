@@ -69,9 +69,10 @@ class ProfileView(View):
 
     def getProfile(self,user):
         try:
-            return  Profile.objects.get(user=user)
+            return Profile.objects.get(user=user)
 
         except Exception as e:
             profile = Profile(user=user)
             profile.save()
             return profile
+

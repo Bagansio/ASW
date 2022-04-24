@@ -31,6 +31,12 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
+
+
+    # api rest
+
+    "rest_framework",
+    "rest_framework_api_key",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

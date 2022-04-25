@@ -24,5 +24,5 @@ urlpatterns = [
     path('comments/', include("server.apps.comments.urls")),
     path('profile/', include('server.apps.accounts.urls')),
 
-    path('api/', include('server.apps.core.api.urls')),
+    path('api/', include('server.apps.api.urls')),
 ]

@@ -17,7 +17,7 @@ class Submission(models.Model):
     text = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(null=False)
     votes = models.BigIntegerField(null=True)
-    comments = models.IntegerField(null=True)
+    comments = models.IntegerField(null=True, default=0)
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,  # null because the post will exists if the user account is deleted

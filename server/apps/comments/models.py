@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
 
 
 # Create your models here.
@@ -36,7 +39,6 @@ class Comment(models.Model):
         vote = CommentVotes(comment=self, voter=self.author)
         vote.save()
 
-
 class CommentVotes(models.Model):
     comment = models.ForeignKey(
         Comment,
@@ -55,3 +57,9 @@ class CommentVotes(models.Model):
     def __unicode__(self):
         return f'{self.voter.username} voted {self.comment.submission.title}'
 
+@receiver(post_save, sender=Comment)
+def count_comments(sender, instance=None, created=False, **kwargs):
+    if created:
+        submission = instance.submission
+        submission.comments += 1
+        submission.save()

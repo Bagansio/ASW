@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import permissions
-from server.apps.core.api.serializers import  *
+from server.apps.api.serializers import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -10,12 +10,23 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
 
 class SubmissionViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows submissions to be viewed or edited.
     """
-    queryset = Submission.objects.all().order_by('-created_at')
+    queryset = Submission.objects.all()
     serializer_class = SubmissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    search_fields = ['id', 'title', 'url', 'created_at', 'author']
+    ordering_fields = '__all__'
+
+
+class SubmissionVoteViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows submissions to be viewed or edited.
+    """
+    queryset = Vote.objects.all()
+    serializer_class = SubmissionVoteSerializer
+    search_fields = ['voter', 'submission']
+    ordering_fields = '__all__'

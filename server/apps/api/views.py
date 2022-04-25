@@ -6,6 +6,8 @@ from server.apps.core.models import  *
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
+from django.shortcuts import get_object_or_404
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -26,7 +28,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     filter_backends = (OrderingFilter, SearchFilter)
     ordering_fields = ['author', 'created_at', 'votes']
     search_fields = ('title', 'url')
-    http_method_names = ['get', 'post', 'head']
+    http_method_names = ['get', 'post', 'head', 'delete']
 
     def list(self, request, *args, **kwargs):
         """
@@ -50,6 +52,28 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         """
         response = super(viewsets.ModelViewSet, self).retrieve(request, args, kwargs)
         return response
+
+    def destroy(self, request, *args, **kwargs):
+        """
+            Deletes a submission
+
+            Deletes a submission if request user is the author of the submission
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': 'not authorized'}
+        try:
+            instance = self.get_object()
+            if request.user == instance.author:
+                response_message = {'message': 'Submission has been deleted'}
+                instance.delete()
+                response_status = status.HTTP_202_ACCEPTED
+
+        except Exception as e:
+            response_message = {'message': 'not found'}
+            response_status = status.HTTP_404_NOT_FOUND
+
+        return Response(response_message, status=response_status)
+
 
 
 class SubmissionVoteViewSet(viewsets.ModelViewSet):

@@ -43,6 +43,7 @@ class Submission(models.Model):
         vote = Vote(submission=self, voter=self.author)
         vote.save()
 
+
 class Vote(models.Model):
     submission = models.ForeignKey(
         Submission,

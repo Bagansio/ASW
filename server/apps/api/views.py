@@ -2,12 +2,13 @@ from django.contrib.auth.models import User
 from server.apps.api.serializers import *
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.views import APIView
-from server.apps.core.models import  *
+from server.apps.core.models import *
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from .utils import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -30,6 +31,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     ordering_fields = ['author', 'created_at', 'votes']
     search_fields = ('title', 'url')
     http_method_names = ['get', 'post', 'head', 'delete']
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return SubmissionCreateSerializer
+        return SubmissionSerializer
 
     def list(self, request, *args, **kwargs):
         """
@@ -75,7 +81,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
-
     def create(self, request, *args, **kwargs):
         """
             Creates a submission
@@ -85,36 +90,36 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         response_status = status.HTTP_401_UNAUTHORIZED
         response_message = {'message': 'not authorized'}
         if request.user.is_authenticated:
-            serializer = SubmissionSerializer(data=request.data, author=request.user)
+            serializer = SubmissionCreateSerializer(data=request.data)
             if serializer.is_valid():
+
                 validated_data = serializer.validated_data
+
                 url = validated_data['url']
                 text = validated_data['text']
+
                 if url is not None:
-                    url_submissions = Submission.objects.filter(url=url)
 
-                    if len(url_submissions) > 0:  # exists another submission with url given
-                        response_message = SubmissionSerializer(data=url_submissions[0])
-                        response_status = status.HTTP_409_CONFLICT
+                    message = already_exists(Submission.objects.filter(url=validated_data['url']),
+                                             'submission', 'url', request)
+                    if message is not None:
+                        return Response(message, status=status.HTTP_409_CONFLICT)
 
-                    if text != "":
-                        submission = self.urlSave(request.user)
+                    if text is not None and text != "":
+                        submission = self.urlSave(request.user, validated_data)
 
-                        comment = Comment(author=request.user, submission=submission, text=text, created_at=timezone.now(),
+                        comment = Comment(author=request.user, submission=submission, text=text,
+                                          created_at=timezone.now(),
                                           level=0)
                         comment.save()
-
-                        submission = SubmissionSerializer(data=submission)
-                        response_message = {'submission': submission}
+                        response_message = SubmissionSerializer(submission).data
                         return Response(response_message, status=status.HTTP_202_ACCEPTED)
 
-                    submission = self.standardSave(request.user, validated_data)
-                    submission = SubmissionSerializer(data=submission)
-                    response_status = status.HTTP_202_ACCEPTED
-                    response_message = {'submission': submission}
+                submission = self.standardSave(request.user, validated_data)
+                response_message = SubmissionSerializer(submission).data
+                response_status = status.HTTP_202_ACCEPTED
             else:
-                print(serializer)
-                response_message = {'message': 'not valid data'}
+                response_message = {'message': 'Data is not valid (Ex: url is not an url)'}
                 response_status = status.HTTP_406_NOT_ACCEPTABLE
         return Response(response_message, status=response_status)
 
@@ -125,9 +130,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return submission
 
-    def urlSave(self, author):
+    def urlSave(self, author, validated_data):
 
-        submission = Submission(title=self.validated_data['title'], url=self.validated_data['url'])
+        submission = Submission(title=validated_data['title'], url=validated_data['url'])
         self.savedb(author, submission)
 
         return submission
@@ -137,11 +142,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         submission.author = author
         submission.created_at = timezone.now()
-        submission.auto_vote()
         submission.votes = 1
         submission.save()
-
-
 
 
 class SubmissionVoteViewSet(viewsets.ModelViewSet):
@@ -157,7 +159,6 @@ class SubmissionVoteViewSet(viewsets.ModelViewSet):
 class Post_APIView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
-
         if request.user.is_authenticated:
             submissions = Submission.objects.filter(author=request.user)
             serializer_context = {

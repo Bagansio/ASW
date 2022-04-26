@@ -7,7 +7,7 @@ from drf_yasg import openapi
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'submissions', SubmissionViewSet, basename='Submissions')
+router.register(r'submissions', SubmissionViewSet)
 router.register(r'submission_vote', SubmissionVoteViewSet)
 
 schema_view = get_schema_view(

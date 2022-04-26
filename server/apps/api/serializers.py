@@ -24,6 +24,14 @@ class SubmissionSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class SubmissionCreateSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Submission
+        fields = ['title', 'url', 'text']
+
+
+
 class SubmissionVoteSerializer(serializers.HyperlinkedModelSerializer):
     voter = UserSerializer(many=False, read_only=True)
     submission = SubmissionSerializer(many=False, read_only=True)

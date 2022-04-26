@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -73,6 +74,73 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             response_status = status.HTTP_404_NOT_FOUND
 
         return Response(response_message, status=response_status)
+
+
+    def create(self, request, *args, **kwargs):
+        """
+            Creates a submission
+
+            Creates a submission if request user is authenticated
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': 'not authorized'}
+        if request.user.is_authenticated:
+            serializer = SubmissionSerializer(data=request.data, author=request.user)
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
+                url = validated_data['url']
+                text = validated_data['text']
+                if url is not None:
+                    url_submissions = Submission.objects.filter(url=url)
+
+                    if len(url_submissions) > 0:  # exists another submission with url given
+                        response_message = SubmissionSerializer(data=url_submissions[0])
+                        response_status = status.HTTP_409_CONFLICT
+
+                    if text != "":
+                        submission = self.urlSave(request.user)
+
+                        comment = Comment(author=request.user, submission=submission, text=text, created_at=timezone.now(),
+                                          level=0)
+                        comment.save()
+
+                        submission = SubmissionSerializer(data=submission)
+                        response_message = {'submission': submission}
+                        return Response(response_message, status=status.HTTP_202_ACCEPTED)
+
+                    submission = self.standardSave(request.user, validated_data)
+                    submission = SubmissionSerializer(data=submission)
+                    response_status = status.HTTP_202_ACCEPTED
+                    response_message = {'submission': submission}
+            else:
+                print(serializer)
+                response_message = {'message': 'not valid data'}
+                response_status = status.HTTP_406_NOT_ACCEPTABLE
+        return Response(response_message, status=response_status)
+
+    def standardSave(self, author, validated_data):
+        submission = Submission(url=validated_data['url'], text=validated_data['text'],
+                                title=validated_data['title'])
+        self.savedb(author, submission)
+
+        return submission
+
+    def urlSave(self, author):
+
+        submission = Submission(title=self.validated_data['title'], url=self.validated_data['url'])
+        self.savedb(author, submission)
+
+        return submission
+
+    @staticmethod
+    def savedb(author, submission):
+
+        submission.author = author
+        submission.created_at = timezone.now()
+        submission.auto_vote()
+        submission.votes = 1
+        submission.save()
+
 
 
 

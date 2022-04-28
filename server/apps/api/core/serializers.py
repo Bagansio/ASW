@@ -3,6 +3,9 @@ from rest_framework import serializers
 from server.apps.core.models import *
 
 
+class MessageSerializer(serializers.Serializer):
+    message = serializers.CharField(max_length=200)
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User

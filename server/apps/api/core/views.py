@@ -6,16 +6,8 @@ from rest_framework import status, viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
 from server.apps.core.utils import *
 from server.apps.api.utils import *
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-
-    http_method_names = ['get',  'head']
+from rest_framework.decorators import action
+from drf_yasg.utils import swagger_auto_schema
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -38,9 +30,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """
-            Show submissions
+            Shows submissions
 
-            Return the submissions
+            Returns the submissions
 
             You can order by 'author' , 'created_at' and 'votes'.
             Also if want a reverse order add a "-" prefix.
@@ -50,15 +42,18 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         response = super(viewsets.ModelViewSet, self).list(request, args, kwargs)
         return response
 
+    @swagger_auto_schema(responses={202: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
     def retrieve(self, request, *args, **kwargs):
         """
-            Show submission by id
+            Shows submission by id
 
             Returns the submission by id
         """
         response = super(viewsets.ModelViewSet, self).retrieve(request, args, kwargs)
         return response
 
+    @swagger_auto_schema(responses={202: get_response(desc="Success", message=ResponseMessages.e201_d),
+                                    401: get_response(ResponseMessages.e401), 404: get_response(ResponseMessages.e404)})
     def destroy(self, request, *args, **kwargs):
         """
             Deletes a submission
@@ -66,7 +61,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             Deletes a submission if request user is the author of the submission
         """
         response_status = status.HTTP_401_UNAUTHORIZED
-        response_message = {'message': 'not authorized'}
+        response_message = {'message': ResponseMessages.e401}
         try:
             instance = self.get_object()
             if request.user == instance.author:
@@ -75,11 +70,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 response_status = status.HTTP_202_ACCEPTED
 
         except Exception as e:
-            response_message = {'message': 'not found'}
+            response_message = {'message': ResponseMessages.e404}
             response_status = status.HTTP_404_NOT_FOUND
 
         return Response(response_message, status=response_status)
 
+    @swagger_auto_schema(responses={202: SubmissionSerializer, 401: get_response(ResponseMessages.e401),
+                                    409: get_response(ResponseMessages.e409), 406: get_response(ResponseMessages.e406)})
     def create(self, request, *args, **kwargs):
         """
             Creates a submission
@@ -87,7 +84,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             Creates a submission if request user is authenticated
         """
         response_status = status.HTTP_401_UNAUTHORIZED
-        response_message = {'message': 'not authorized'}
+        response_message = {'message': ResponseMessages.e401}
         if request.user.is_authenticated:
             serializer = SubmissionCreateSerializer(data=request.data)
             if serializer.is_valid():
@@ -118,7 +115,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 response_message = SubmissionSerializer(submission).data
                 response_status = status.HTTP_202_ACCEPTED
             else:
-                response_message = {'message': 'Data is not valid (Ex: url is not an url)'}
+                response_message = {'message': ResponseMessages.e406}
                 response_status = status.HTTP_406_NOT_ACCEPTABLE
         return Response(response_message, status=response_status)
 

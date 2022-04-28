@@ -21,8 +21,8 @@ class UserViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'head']
 
     @swagger_auto_schema(responses={200: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
-    @action(detail=True, methods=['GET'], name='submitted')
-    def submitted(self, request, pk, *args, **kwargs):
+    @action(detail=True, methods=['GET'], name='submissions')
+    def submissions(self, request, pk, *args, **kwargs):
         """
             Shows the submissions submitted by given user
 

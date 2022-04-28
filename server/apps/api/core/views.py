@@ -1,14 +1,11 @@
 from django.contrib.auth.models import User
-from server.apps.api.serializers import *
-from rest_framework.generics import RetrieveAPIView
+from server.apps.api.core.serializers import *
 from rest_framework.views import APIView
-from server.apps.core.models import *
 from rest_framework.response import Response
-from rest_framework import status, viewsets, permissions
+from rest_framework import status, viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
-from django.shortcuts import get_object_or_404
 from server.apps.core.utils import *
-from .utils import *
+from server.apps.api.utils import *
 
 
 class UserViewSet(viewsets.ModelViewSet):

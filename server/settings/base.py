@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
 
     # api rest
+    "corsheaders",
     "server.apps.api",
     "rest_framework",
     "rest_framework.authtoken",
@@ -62,8 +63,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
-
 
 # ==============================================================================
 # TEMPLATES SETTINGS
@@ -206,6 +207,25 @@ SERVER_ENVIRONMENT = config("SERVER_ENVIRONMENT", default="local")
 
 
 # ==============================================================================
+# CORS SETTINGS
+# ==============================================================================
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'access-control-allow-origin',
+]
+
+# ==============================================================================
 # API SETTINGS
 # ==============================================================================
 REST_FRAMEWORK = {
@@ -230,5 +250,6 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'JSON_EDITOR': True,
 }
+
 
 

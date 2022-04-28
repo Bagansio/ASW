@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+from server.apps.core.utils import *
 from .utils import *
 
 
@@ -17,6 +17,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+
+    http_method_names = ['get',  'head']
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -106,7 +108,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                         return Response(message, status=status.HTTP_409_CONFLICT)
 
                     if text is not None and text != "":
-                        submission = self.urlSave(request.user, validated_data)
+                        submission = urlSaveSubmission(request.user, validated_data)
 
                         comment = Comment(author=request.user, submission=submission, text=text,
                                           created_at=timezone.now(),
@@ -115,35 +117,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                         response_message = SubmissionSerializer(submission).data
                         return Response(response_message, status=status.HTTP_202_ACCEPTED)
 
-                submission = self.standardSave(request.user, validated_data)
+                submission = standardSaveSubmission(request.user, validated_data)
                 response_message = SubmissionSerializer(submission).data
                 response_status = status.HTTP_202_ACCEPTED
             else:
                 response_message = {'message': 'Data is not valid (Ex: url is not an url)'}
                 response_status = status.HTTP_406_NOT_ACCEPTABLE
         return Response(response_message, status=response_status)
-
-    def standardSave(self, author, validated_data):
-        submission = Submission(url=validated_data['url'], text=validated_data['text'],
-                                title=validated_data['title'])
-        self.savedb(author, submission)
-
-        return submission
-
-    def urlSave(self, author, validated_data):
-
-        submission = Submission(title=validated_data['title'], url=validated_data['url'])
-        self.savedb(author, submission)
-
-        return submission
-
-    @staticmethod
-    def savedb(author, submission):
-
-        submission.author = author
-        submission.created_at = timezone.now()
-        submission.votes = 1
-        submission.save()
 
 
 class SubmissionVoteViewSet(viewsets.ModelViewSet):

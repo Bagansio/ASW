@@ -1,14 +1,15 @@
 from django.urls import include, path, re_path
 from rest_framework import routers
-from server.apps.api.core.views import *
+from server.apps.api.core import views as core_views
+from server.apps.api.accounts import views as accounts_views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'submissions', SubmissionViewSet)
-router.register(r'submission_vote', SubmissionVoteViewSet)
+router.register(r'users', accounts_views.UserViewSet)
+router.register(r'submissions', core_views.SubmissionViewSet)
+router.register(r'submission_vote', core_views.SubmissionVoteViewSet)
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -27,7 +28,7 @@ schema_view = get_schema_view(
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
-    path('test', Post_APIView.as_view(), name='test'),
+    #path('test', Post_APIView.as_view(), name='test'),
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

@@ -16,7 +16,7 @@ class Submission(models.Model):
     url = models.URLField(max_length=200, blank=True, null=True)
     text = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(null=False)
-    votes = models.BigIntegerField(null=True)
+    votes = models.BigIntegerField(null=True, default=0)
     comments = models.IntegerField(null=True, default=0)
     author = models.ForeignKey(
         User,
@@ -42,6 +42,8 @@ class Submission(models.Model):
     def auto_vote(self):
         vote = Vote(submission=self, voter=self.author)
         vote.save()
+        self.votes += 1
+        self.save()
 
 
 class Vote(models.Model):

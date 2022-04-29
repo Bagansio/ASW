@@ -31,7 +31,7 @@ class ResponseMessages:
     e406 = 'data is not valid'
 
 
-def get_response(message, *args, **kwargs):
+def get_response(message, **kwargs):
     desc = "Error"
 
     if 'desc' in kwargs:

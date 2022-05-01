@@ -21,7 +21,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer = SubmissionSerializer(queryset, many=True)
     serializer_class = SubmissionSerializer
     filter_backends = (OrderingFilter, SearchFilter)
-    ordering_fields = ['author', 'created_at', 'votes']
+    ordering_fields = ['author', 'created_at', 'votes', 'comments']
     search_fields = ('title', 'url')
     http_method_names = ['get', 'post', 'head', 'delete']
 
@@ -46,7 +46,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         response = super(viewsets.ModelViewSet, self).list(request, args, kwargs)
         return response
 
-    @swagger_auto_schema(responses={202: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
+    @swagger_auto_schema(responses={200: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
     def retrieve(self, request, *args, **kwargs):
         """
             Shows submission by id
@@ -56,7 +56,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         response = super(viewsets.ModelViewSet, self).retrieve(request, args, kwargs)
         return response
 
-    @swagger_auto_schema(responses={202: get_response(desc="Success", message=ResponseMessages.e201_d),
+    @swagger_auto_schema(responses={200: get_response(desc="Success", message=ResponseMessages.e201_d),
                                     401: get_response(ResponseMessages.e401),
                                     404: get_response(ResponseMessages.e404)})
     def destroy(self, request, *args, **kwargs):
@@ -70,9 +70,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             if request.user == instance.author:
-                response_message = {'message': 'Submission has been deleted'}
-                instance.delete()
-                response_status = status.HTTP_202_ACCEPTED
+                if instance.comments == 0:
+                    response_message = {'message': 'Submission has been deleted'}
+                    instance.delete()
+                    response_status = status.HTTP_200_OK
+                else:
+                    response_message = {'message': "ERROR: Can't delete if has comments"}
+                    response_status = status.HTTP_406_NOT_ACCEPTABLE
 
         except Exception as e:
             response_message = {'message': ResponseMessages.e404}
@@ -80,7 +84,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
-    @swagger_auto_schema(responses={202: SubmissionSerializer,
+    @swagger_auto_schema(responses={200: SubmissionSerializer,
                                     401: get_response(ResponseMessages.e401),
                                     409: get_response(ResponseMessages.e409),
                                     406: get_response(ResponseMessages.e406)})
@@ -116,11 +120,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                                           level=0)
                         comment.save()
                         response_message = SubmissionSerializer(submission).data
-                        return Response(response_message, status=status.HTTP_202_ACCEPTED)
+                        return Response(response_message, status=status.HTTP_200_OK)
 
                 submission = standardSaveSubmission(request.user, validated_data)
                 response_message = SubmissionSerializer(submission).data
-                response_status = status.HTTP_202_ACCEPTED
+                response_status = status.HTTP_200_OK
             else:
                 response_message = {'message': ResponseMessages.e406}
                 response_status = status.HTTP_406_NOT_ACCEPTABLE
@@ -146,6 +150,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(responses={200: CommentSerializer,
+                                    401: get_response(ResponseMessages.e401),
+                                    404: get_response(ResponseMessages.e404)})
     @comments.mapping.post
     def reply(self, request, pk, *args, **kwargs):
         """
@@ -166,7 +173,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 reply = create_comment(request.user, serializer.validated_data['text'],
                                        submission, 0, None)
                 response_message = CommentSerializer(reply).data
-                response_status = status.HTTP_202_ACCEPTED
+                response_status = status.HTTP_200_OK
 
         return Response(response_message, status=response_status)
 

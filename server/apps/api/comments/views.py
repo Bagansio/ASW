@@ -21,10 +21,10 @@ class CommentViewSet(viewsets.GenericViewSet ):
     queryset = Comment.objects.all()
     serializer = CommentSerializer(queryset, many=True)
     serializer_class = CommentSerializer
-    http_method_names = ['get', 'post', 'head', 'delete']
+    http_method_names = ['get', 'post', 'patch', 'head', 'delete']
 
     def get_serializer_class(self):
-        if self.action == 'reply':
+        if self.action == 'reply' or self.action == 'partial_update':
             return CommentCreateSerializer
         return CommentSerializer
 
@@ -48,7 +48,7 @@ class CommentViewSet(viewsets.GenericViewSet ):
 
 
 
-    @swagger_auto_schema(responses={200: CommentSerializer, 404: get_response(ResponseMessages.e404)})
+    @swagger_auto_schema(responses={200: CommentSerializer(many=True), 404: get_response(ResponseMessages.e404)})
     @action(detail=True, methods=['GET'], name='comments')
     def comments(self, request, pk, *args, **kwargs):
         """
@@ -68,6 +68,9 @@ class CommentViewSet(viewsets.GenericViewSet ):
         serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(responses={200: CommentSerializer,
+                                    401: get_response(ResponseMessages.e401),
+                                    404: get_response(ResponseMessages.e404)})
     @comments.mapping.post
     def reply(self, request, pk, *args, **kwargs):
         """
@@ -88,7 +91,69 @@ class CommentViewSet(viewsets.GenericViewSet ):
                 reply = create_comment(request.user, serializer.validated_data['text'],
                                        parent.submission, parent.level+1, parent)
                 response_message = CommentSerializer(reply).data
-                response_status = status.HTTP_202_ACCEPTED
+                response_status = status.HTTP_200_OK
+            else:
+                response_message = {'message': ResponseMessages.e406}
+                response_status = status.HTTP_406_NOT_ACCEPTABLE
 
         return Response(response_message, status=response_status)
 
+    @swagger_auto_schema(responses={200: get_response(desc="Success", message=ResponseMessages.e201_d),
+                                    401: get_response(ResponseMessages.e401),
+                                    404: get_response(ResponseMessages.e404)})
+    def destroy(self, request, *args, **kwargs):
+        """
+            Deletes a comment
+
+            Deletes a comment if request user is the author of the comment
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        try:
+            instance = self.get_object()
+
+            if request.user == instance.author:
+                childs = Comment.objects.filter(parent=instance)
+                if len(childs) == 0:
+                    response_message = {'message': 'Comment has been deleted'}
+                    instance.submission.comments -= 1
+                    instance.submission.save()
+                    instance.delete()
+                    response_status = status.HTTP_200_OK
+                else:
+                    response_message = {'message': "ERROR: Can't delete if has replies"}
+                    response_status = status.HTTP_406_NOT_ACCEPTABLE
+
+        except Exception as e:
+            response_message = {'message': ResponseMessages.e404}
+            response_status = status.HTTP_404_NOT_FOUND
+
+        return Response(response_message, status=response_status)
+
+
+    def partial_update(self, request, *args, **kwargs):
+        """
+            Deletes a comment
+
+            Deletes a comment if request user is the author of the comment
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        try:
+            instance = self.get_object()
+            if request.user == instance.author:
+                serializer = CommentCreateSerializer(data=request.data)
+                if serializer.is_valid():
+                    instance.text = serializer.validated_data['text']
+                    instance.save()
+
+                    response_message = CommentSerializer(instance).data
+                    response_status = status.HTTP_200_OK
+                else:
+                    response_message = {'message': ResponseMessages.e406}
+                    response_status = status.HTTP_406_NOT_ACCEPTABLE
+        except Exception as e:
+            response_message = {'message': ResponseMessages.e404}
+            response_status = status.HTTP_404_NOT_FOUND
+
+        return Response(response_message, response_status)

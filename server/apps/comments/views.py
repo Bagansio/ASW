@@ -78,8 +78,8 @@ class CommentsView(View):
         except Exception as e:
             return HttpResponse('No such item.')
 
-        submission.count_votes()
-        submission.count_comments()
+        #submission.count_votes()
+        #submission.count_comments()
 
         voted = get_voted(user, submission)
         comments = []
@@ -107,8 +107,11 @@ class CommentsView(View):
             form = CommentForm(request.POST)
 
             if form.is_valid():
+
                 submission = Submission.objects.get(id=id)
+                print(submission.comments)
                 form.savedb(user, submission, 0, None)
+                print(submission.comments)
 
         return redirect('comments', id=id)
 
@@ -188,7 +191,7 @@ class UpvotedView(View):
 
         comments = []
         for vote in votes:
-            vote.comment.count_votes()
+            #vote.comment.count_votes()
             vote.comment.level = 0
             if vote.voter != vote.comment.author:
                 comments.append(vote.comment)

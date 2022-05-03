@@ -27,7 +27,7 @@ class Comment(models.Model):
         null=True
     )
     created_at = models.DateTimeField(null=False)
-    votes = models.IntegerField(null=True)
+    votes = models.IntegerField(null=True, default=0)
 
     def __unicode__(self):
         return f'Comment of {self.submission.title} by {self.user.username}'
@@ -38,6 +38,8 @@ class Comment(models.Model):
     def auto_vote(self):
         vote = CommentVotes(comment=self, voter=self.author)
         vote.save()
+        self.votes += 1
+        self.save()
 
 class CommentVotes(models.Model):
     comment = models.ForeignKey(

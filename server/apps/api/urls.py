@@ -2,6 +2,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from server.apps.api.core import views as core_views
 from server.apps.api.accounts import views as accounts_views
+from server.apps.api.comments import views as comments_views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -9,6 +10,7 @@ from drf_yasg import openapi
 router = routers.DefaultRouter()
 router.register(r'users', accounts_views.UserViewSet)
 router.register(r'submissions', core_views.SubmissionViewSet)
+router.register(r'comments', comments_views.CommentViewSet)
 router.register(r'submission_vote', core_views.SubmissionVoteViewSet)
 
 schema_view = get_schema_view(

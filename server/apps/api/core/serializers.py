@@ -27,6 +27,11 @@ class SubmissionSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class SubmissionCommentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Submission
+        fields = ['title', 'id']
+
 class SubmissionCreateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:

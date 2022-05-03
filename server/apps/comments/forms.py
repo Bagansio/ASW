@@ -29,4 +29,5 @@ class CommentForm(ModelForm):
         comment.level = level
         comment.parent = parent
         comment.save()
+        submission.save()
         comment.auto_vote()

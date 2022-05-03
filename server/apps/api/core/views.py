@@ -177,6 +177,35 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
+    @swagger_auto_schema(responses={200: CommentSerializer, 404: get_response(ResponseMessages.e404)})
+    @action(detail=True, methods=['GET'], name='votes')
+    def votes(self, request, pk, *args, **kwargs):
+        """
+           Shows votes of a submission by id
+
+            Returns all the votes of a submission
+        """
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        submission = Submission.objects.get(id=pk)
+        if submission is not None:
+            queryset = Vote.objects.filter(submission=submission)
+
+            serializer = SubmissionVoteSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        return Response(response_message, status=response_status)
+
+
+    '''
+    @votes.mapping.post
+    def vote(self, request, pk, *args, **kwargs):
+    """
+       Shows votes of a submission by id
+
+        Returns all the votes of a submission
+    """
+    '''
 class SubmissionVoteViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows submissions to be viewed or edited.

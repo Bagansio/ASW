@@ -22,3 +22,13 @@ def saveSubmission(author, submission):
     submission.created_at = timezone.now()
     submission.save()
     submission.auto_vote()
+
+
+def saveSubmissionVote(voter,item):
+
+    vote = Vote(voter=voter, submission=item)
+    vote.save()
+    item.votes += 1
+    item.save()
+    return vote
+

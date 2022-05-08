@@ -47,3 +47,19 @@ class SubmissionVoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Vote
         fields = '__all__'
+
+
+class UserInfoSerializer(serializers.HyperlinkedModelSerializer):
+    user = UserSerializer(read_only=True, required=False)
+    karma = serializers.IntegerField(default=0)
+    about = serializers.CharField(max_length=60000, required=False)
+    email = serializers.CharField(max_length=500, required=False)
+    showdead = serializers.BooleanField(default=False)
+    noprocrast = serializers.BooleanField(default=False)
+    maxvisit = serializers.IntegerField(default=20)
+    minaway = serializers.IntegerField(default=180)
+    delay = serializers.IntegerField(default=0)
+
+    class Meta:
+        model = Profile
+        fields = ['user', 'karma', 'about', 'email', 'showdead', 'noprocrast', 'maxvisit', 'minaway','delay',]

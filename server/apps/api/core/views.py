@@ -248,7 +248,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             if submission is not None:
 
                 votes = Vote.objects.filter(submission=submission).filter(voter=request.user)
-                print(votes)
                 if len(votes) != 0:
                     vote = votes[0]
                     if submission.author != request.user or request.user == vote.voter:

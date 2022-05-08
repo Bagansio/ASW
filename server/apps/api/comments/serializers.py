@@ -31,8 +31,26 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
     created_at = serializers.DateTimeField(required=False)
     votes = serializers.IntegerField(required=False)
 
-
     class Meta:
         model = Comment
         fields = ('id', 'submission', 'author', 'text',
                   'level', 'parent', 'created_at', 'votes')
+
+
+
+class CommentShowVoteSerializer(serializers.HyperlinkedModelSerializer):
+    voter = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = CommentVotes
+        fields = ('voter', )
+
+
+class CommentDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
+    voter = UserSerializer(many=False, read_only=True)
+    comment = CommentSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Vote
+        fields = ['id', 'voter','comment']
+

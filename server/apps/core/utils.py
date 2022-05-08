@@ -33,7 +33,7 @@ def saveSubmissionVote(voter,item):
     item.save()
     return vote
 
-def deletesubmissionVote(vote,submission):
+def deleteSubmissionVote(vote,submission):
     vote.delete()
     changeNumberOfVotes(submission, "negative")
     submission.save()

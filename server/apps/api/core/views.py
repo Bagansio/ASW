@@ -30,6 +30,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             return SubmissionCreateSerializer
         elif self.action == 'reply':
             return CommentCreateSerializer
+        elif self.action == 'vote':
+            return SubmissionCreateVoteSerializer
         return SubmissionSerializer
 
     def list(self, request, *args, **kwargs):
@@ -177,6 +179,110 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
+    @swagger_auto_schema(responses={200: SubmissionVoteSerializer(many=True), 404: get_response(ResponseMessages.e404)})
+    @action(detail=True, methods=['GET'], name='votes')
+    def votes(self, request, pk, *args, **kwargs):
+        """
+           Shows votes of a submission by id
+
+            Returns all the votes of a submission
+        """
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        submission = Submission.objects.get(id=pk)
+        if submission is not None:
+            queryset = Vote.objects.filter(submission=submission)
+
+            serializer = SubmissionVoteSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        return Response(response_message, status=response_status)
+
+
+    @swagger_auto_schema(responses={200: SubmissionSerializer,
+                                    401: get_response(ResponseMessages.e401),
+                                    404: get_response(ResponseMessages.e404),
+                                    409: get_response(ResponseMessages.e409)})
+    @votes.mapping.post
+    def vote(self, request, pk, *args, **kwargs):
+        """
+           Votes a submission
+
+           Upvotes a given submission
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        if request.user.is_authenticated:
+            try:
+                submission = Submission.objects.get(id=pk)
+            except Exception as e:
+                return Response({'message': ResponseMessages.e404}, status.HTTP_404_NOT_FOUND)
+
+            votes = Vote.objects.filter(submission=submission).filter(voter=request.user)
+            if len(votes) == 0:
+
+                vote = saveSubmissionVote(request.user, submission)
+                response_message = SubmissionDefaultVoteSerializer(vote).data
+                response_status = status.HTTP_200_OK
+
+            else:
+                response_message = {'message': ResponseMessages.e409}
+                response_status = status.HTTP_409_CONFLICT
+        return Response(response_message, status=response_status)
+
+    @swagger_auto_schema(responses={200: get_response(desc="Success", message=ResponseMessages.e201_d),
+                                    401: get_response(ResponseMessages.e401),
+                                    404: get_response(ResponseMessages.e404)})
+    @votes.mapping.delete
+    def destroy_vote(self, request, pk, *args, **kwargs):
+        """
+            Deletes a vote
+
+            Deletes a vote if request user is its author
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        if request.user.is_authenticated:
+
+            submission = Submission.objects.get(id=pk)
+            if submission is not None:
+
+                votes = Vote.objects.filter(submission=submission).filter(voter=request.user)
+                if len(votes) != 0:
+                    vote = votes[0]
+                    if submission.author != request.user or request.user == vote.voter:
+                        deletesubmissionVote(vote, submission)
+
+                        response_status = status.HTTP_200_OK
+                        response_message = {'message': ResponseMessages.s200}
+                    else:
+                        response_status = status.HTTP_403_FORBIDDEN
+                        response_message = {'message': ResponseMessages.e403}
+
+                else:
+                    response_message = {'message': ResponseMessages.e404}
+                    response_status = status.HTTP_404_NOT_FOUND
+                # request.user != instance.author
+                # not exists vote
+                #
+
+            else:
+                response_message = {'message': ResponseMessages.e404}
+                response_status = status.HTTP_404_NOT_FOUND
+
+
+        return Response(response_message, status=response_status)
+
+
+    '''
+    @votes.mapping.post
+    def vote(self, request, pk, *args, **kwargs):
+    """
+       Shows votes of a submission by id
+
+        Returns all the votes of a submission
+    """
+    '''
 class SubmissionVoteViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows submissions to be viewed or edited.

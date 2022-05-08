@@ -10,3 +10,17 @@ def create_comment(author, text, submission, level, parent):
     submission.save()
     comment.auto_vote()
     return comment
+
+
+def saveCommentsVote(voter,item):
+
+    vote = CommentVotes(voter=voter, comment=item)
+    vote.save()
+    item.votes += 1
+    item.save()
+    return vote
+
+def deleteCommentVote(vote,comment):
+    vote.delete()
+    comment.votes -= 1
+    comment.save()

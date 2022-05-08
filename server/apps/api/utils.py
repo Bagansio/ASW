@@ -26,9 +26,12 @@ class ResponseMessages:
 
     e201_d = 'Deleted'
     e401 = 'not authorized'
+    e403 = 'Forbidden.'
     e404 = 'not found'
     e409 = 'already exists'
     e406 = 'data is not valid'
+
+    s200 = 'Success.'
 
 
 def get_response(message, **kwargs):

@@ -23,15 +23,18 @@ def get_user(id):
 
 
 class ResponseMessages:
-
-    e201_d = 'Deleted'
-    e401 = 'not authorized'
-    e403 = 'Forbidden.'
-    e404 = 'not found'
-    e409 = 'already exists'
-    e406 = 'data is not valid'
-
+    
     s200 = 'Success.'
+    e201_d = 'Deleted.'
+    e401 = 'Unauthenticated.'
+    e403 = 'Forbidden.'
+    e404 = 'Not Found.'
+    e406 = 'Data is not valid.'
+    e409 = 'Already exists.'
+    
+
+
+    
 
 
 def get_response(message, **kwargs):

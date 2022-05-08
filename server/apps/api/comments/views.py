@@ -26,6 +26,8 @@ class CommentViewSet(viewsets.GenericViewSet ):
     def get_serializer_class(self):
         if self.action == 'reply' or self.action == 'partial_update':
             return CommentCreateSerializer
+        elif self.action == 'voteComment':
+            return CommentDefaultVoteSerializer
         return CommentSerializer
 
     @swagger_auto_schema(responses={200: CommentSerializer, 404: get_response(ResponseMessages.e404)})
@@ -157,3 +159,87 @@ class CommentViewSet(viewsets.GenericViewSet ):
             response_status = status.HTTP_404_NOT_FOUND
 
         return Response(response_message, response_status)
+
+
+    @swagger_auto_schema(responses={200: CommentShowVoteSerializer(many=True), 404: get_response(ResponseMessages.e404)})
+    @action(detail=True, methods=['GET'], name='votes')
+    def votes(self, request, pk, *args, **kwargs):
+        """
+            Shows comments of a submission
+
+            Returns all the comments of a submission
+        """
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        comment = Comment.objects.get(id=pk)
+        if comment is not None:
+            queryset = CommentVotes.objects.filter(comment=comment)
+
+            serializer = CommentShowVoteSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        return Response(response_message, status=response_status)
+
+
+    @votes.mapping.post
+    def voteComment(self, request, pk, *args, **kwargs):
+        """
+           Votes a comment
+
+           Upvotes a given comment
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        if request.user.is_authenticated:
+            try:
+                comment = Comment.objects.get(id=pk)
+            except Exception as e:
+                return Response({'message': ResponseMessages.e404}, status.HTTP_404_NOT_FOUND)
+
+            votes = CommentVotes.objects.filter(comment=comment).filter(voter=request.user)
+            if len(votes) == 0:
+
+                commentVote = saveCommentsVote(request.user, comment)
+                response_message = CommentDefaultVoteSerializer(commentVote).data
+                response_status = status.HTTP_200_OK
+
+            else:
+                response_message = {'message': ResponseMessages.e409}
+                response_status = status.HTTP_409_CONFLICT
+        return Response(response_message, status=response_status)
+
+    @votes.mapping.delete
+    def destroy_vote(self, request, pk, *args, **kwargs):
+        """
+            Deletes a comment vote
+
+            Deletes a comment vote if request user is its author
+        """
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        if request.user.is_authenticated:
+
+            comment = Comment.objects.get(id=pk)
+            if comment is not None:
+
+                votes = CommentVotes.objects.filter(comment=comment).filter(voter=request.user)
+                if len(votes) != 0:
+                    vote = votes[0]
+                    if comment.author != request.user or request.user == vote.voter:
+                        deleteCommentVote(vote, comment)
+
+                        response_status = status.HTTP_200_OK
+                        response_message = {'message': ResponseMessages.s200}
+                    else:
+                        response_status = status.HTTP_403_FORBIDDEN
+                        response_message = {'message': ResponseMessages.e403}
+
+                else:
+                    response_message = {'message': ResponseMessages.e404}
+                    response_status = status.HTTP_404_NOT_FOUND
+
+            else:
+                response_message = {'message': ResponseMessages.e404}
+                response_status = status.HTTP_404_NOT_FOUND
+
+        return Response(response_message, status=response_status)

@@ -253,7 +253,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     vote = votes[0]
                     if submission.author != request.user or request.user == vote.voter:
                         vote.delete()
-                        submission.votes -= 1
+                        #submission.votes -= 1
+                        changeNumberOfVotes(submission, "negative")
                         submission.save()
 
                         response_status = status.HTTP_200_OK

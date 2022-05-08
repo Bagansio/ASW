@@ -28,7 +28,14 @@ def saveSubmissionVote(voter,item):
 
     vote = Vote(voter=voter, submission=item)
     vote.save()
-    item.votes += 1
+    #item.votes += 1
+    changeNumberOfVotes(item, "positive")
     item.save()
     return vote
+
+def changeNumberOfVotes(submission, sign):
+    if sign == "positive":
+        submission.votes -= 1
+    else:
+        submission.votes += 1
 

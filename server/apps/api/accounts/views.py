@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 
+from server.apps.accounts.models import Profile
 from server.apps.api.comments.serializers import CommentSerializer
 from server.apps.api.core.serializers import *
 from rest_framework.views import APIView
@@ -22,7 +23,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
-    http_method_names = ['get', 'head']
+
+    http_method_names = ['get', 'head', 'patch']
+
+    def get_serializer_class(self):
+        if self.action == 'partial_update':
+            return UserInfoSerializer
+        return UserSerializer
 
     @swagger_auto_schema(responses={200: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
     @action(detail=True, methods=['GET'], name='submissions')
@@ -125,37 +132,48 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
     @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
-    @action(detail=True, methods=['POST'], name='UdateUserInfo')
-    def updateUserInfo(self, request, *args, **kwargs):
-        serializer = UserInfoSerializer(queryset, many=True, context={'request': request})
 
+    def partial_update(self, request , pk ,*args, **kwargs):
+        """
+            Uptdates info of given user
+
+            Updates the info
+        """
         try:
-            usertoupdate = self.get_object()
-            #no se si hacerlo asi
-            if request.user == usertoupdate
-                queryset = Profile.objects.filter(user=user)
-                serializer = UserInfoSerializer(queryset, many=True, context={'request': request})
+            response_status = status.HTTP_401_UNAUTHORIZED
+            response_message = {'message': ResponseMessages.e401}
+
+            user = get_user(pk)
+
+            if request.user == user:
+
+                serializer = UserInfoSerializer(data=request.data)
+
                 if serializer.is_valid():
-                    validated_data = serializer.validated_data
-                    # usertoupdate.about = validated_data['about']
-                    about = validated_data['about']
-                    email = validated_data['email']
-                    showdead = validated_data['showdead']
-                    noprocrast = validated_data['noprocrast']
-                    maxvisit = validated_data['maxvisit']
-                    minaway = validated_data['minaway']
-                    delay = validated_data['delay']
+
+
+                    user.about = serializer.validated_data['about']
+                    user.email = serializer.validated_data['email']
+                    user.showdead = serializer.validated_data['showdead']
+                    user.noprocrast = serializer.validated_data['noprocrast']
+                    user.maxvisit = serializer.validated_data['maxvisit']
+                    user.minaway = serializer.validated_data['minaway']
+                    user.delay = serializer.validated_data['delay']
 
                     #usertoupdate.save()
-                    response_message = CommentSerializer(usertoupdate).data
-                    response_status = status.HTTP_200_OK
-                    #lo que falta
-                    #coger usuario y asignar los parametros del validated data
-                    #guardar en la bd
-                    #response_message = UserInfoSerializer(uptdatedUser).data
+                    user.save()
 
+
+
+
+                    response_message = UserInfoSerializer(user).data
+                    response_status = status.HTTP_200_OK
 
         except Exception as e:
             response_message = {'message': ResponseMessages.e404}
             response_status = status.HTTP_404_NOT_FOUND
+
         return Response(response_message, response_status)
+
+
+

@@ -49,9 +49,9 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'], name='comments')
     def comments(self, request, pk, *args, **kwargs):
         """
-            Shows the submissions submitted by given user
+            Shows the comments created by given user
 
-            Returns the user submissions
+            Returns the user comments
         """
 
         response_status = status.HTTP_404_NOT_FOUND
@@ -66,9 +66,17 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
-    @swagger_auto_schema(responses={200: SubmissionSerializer, 401: get_response(ResponseMessages.e401), 403: get_response(ResponseMessages.e403), 404: get_response(ResponseMessages.e404)})
+    @swagger_auto_schema(responses={200: SubmissionSerializer(many=True),
+                                    401: get_response(ResponseMessages.e401),
+                                    403: get_response(ResponseMessages.e403),
+                                    404: get_response(ResponseMessages.e404)})
     @action(detail=True, methods=['GET'], name='voted-submissions')
     def voted_submission(self, request, pk):
+        """
+            Shows the voted submission by given user
+
+            Returns the voted submissions
+        """
         response_status = status.HTTP_401_UNAUTHORIZED
         response_message = {'message': ResponseMessages.e401}
 
@@ -93,11 +101,17 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
-    @swagger_auto_schema(responses={200: SubmissionSerializer, 401: get_response(ResponseMessages.e401),
+    @swagger_auto_schema(responses={200: CommentSerializer(many=True),
+                                    401: get_response(ResponseMessages.e401),
                                     403: get_response(ResponseMessages.e403),
                                     404: get_response(ResponseMessages.e404)})
     @action(detail=True, methods=['GET'], name='voted-comments')
     def voted_comments(self, request, pk):
+        """
+            Shows the voted comments by given user
+
+            Returns the voted comments
+        """
         response_status = status.HTTP_401_UNAUTHORIZED
         response_message = {'message': ResponseMessages.e401}
 

@@ -250,8 +250,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 votes = Vote.objects.filter(submission=submission).filter(voter=request.user)
                 if len(votes) != 0:
                     vote = votes[0]
-                    if submission.author != request.user or request.user == vote.voter:
-                        deletesubmissionVote(vote, submission)
+                    if submission.author != request.user and request.user == vote.voter:
+                        deleteSubmissionVote(vote, submission)
 
                         response_status = status.HTTP_200_OK
                         response_message = {'message': ResponseMessages.s200}
@@ -273,36 +273,3 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
-
-    '''
-    @votes.mapping.post
-    def vote(self, request, pk, *args, **kwargs):
-    """
-       Shows votes of a submission by id
-
-        Returns all the votes of a submission
-    """
-    '''
-class SubmissionVoteViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows submissions to be viewed or edited.
-    """
-    queryset = Vote.objects.all()
-    serializer_class = SubmissionVoteSerializer
-    search_fields = ['voter', 'submission']
-    ordering_fields = '__all__'
-
-
-class Post_APIView(APIView):
-
-    def get(self, request, format=None, *args, **kwargs):
-        if request.user.is_authenticated:
-            submissions = Submission.objects.filter(author=request.user)
-            serializer_context = {
-                'request': request,
-            }
-            serializer = SubmissionSerializer(submissions, context=serializer_context, many=True)
-            print(submissions)
-            return Response(serializer.data)
-        data = {'message': 'not authenticated'}
-        return Response(data, status.HTTP_406_NOT_ACCEPTABLE)

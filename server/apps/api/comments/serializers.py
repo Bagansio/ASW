@@ -54,3 +54,11 @@ class CommentDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
         model = Vote
         fields = ['id', 'voter','comment']
 
+
+class CommentCreateVoteSerializer(serializers.HyperlinkedModelSerializer):
+    voter = serializers.ReadOnlyField()
+    comment = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Vote
+        fields = ['id', 'voter','comment']

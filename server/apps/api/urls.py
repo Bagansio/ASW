@@ -11,7 +11,6 @@ router = routers.DefaultRouter()
 router.register(r'users', accounts_views.UserViewSet)
 router.register(r'submissions', core_views.SubmissionViewSet)
 router.register(r'comments', comments_views.CommentViewSet)
-router.register(r'submission_vote', core_views.SubmissionVoteViewSet)
 
 schema_view = get_schema_view(
    openapi.Info(

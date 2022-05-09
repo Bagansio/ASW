@@ -45,8 +45,29 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, status=response_status)
 
+    @swagger_auto_schema(responses={200: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
+    @action(detail=True, methods=['GET'], name='comments')
+    def comments(self, request, pk, *args, **kwargs):
+        """
+            Shows the submissions submitted by given user
+
+            Returns the user submissions
+        """
+
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+
+        user = get_user(pk)
+        if user is not None:
+            queryset = Comment.objects.filter(author=user)
+
+            serializer = CommentSerializer(queryset, many=True)
+            return Response(serializer.data)
+
+        return Response(response_message, status=response_status)
+
     @swagger_auto_schema(responses={200: SubmissionSerializer, 401: get_response(ResponseMessages.e401), 403: get_response(ResponseMessages.e403), 404: get_response(ResponseMessages.e404)})
-    @action(detail=True, methods=['GET'], name='voted_submissions')
+    @action(detail=True, methods=['GET'], name='voted-submissions')
     def voted_submission(self, request, pk):
         response_status = status.HTTP_401_UNAUTHORIZED
         response_message = {'message': ResponseMessages.e401}
@@ -75,7 +96,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @swagger_auto_schema(responses={200: SubmissionSerializer, 401: get_response(ResponseMessages.e401),
                                     403: get_response(ResponseMessages.e403),
                                     404: get_response(ResponseMessages.e404)})
-    @action(detail=True, methods=['GET'], name='voted_comments')
+    @action(detail=True, methods=['GET'], name='voted-comments')
     def voted_comments(self, request, pk):
         response_status = status.HTTP_401_UNAUTHORIZED
         response_message = {'message': ResponseMessages.e401}

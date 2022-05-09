@@ -26,8 +26,8 @@ class CommentViewSet(viewsets.GenericViewSet ):
     def get_serializer_class(self):
         if self.action == 'reply' or self.action == 'partial_update':
             return CommentCreateSerializer
-        elif self.action == 'voteComment':
-            return CommentDefaultVoteSerializer
+        elif self.action == 'vote':
+            return CommentCreateVoteSerializer
         return CommentSerializer
 
     @swagger_auto_schema(responses={200: CommentSerializer, 404: get_response(ResponseMessages.e404)})
@@ -182,7 +182,7 @@ class CommentViewSet(viewsets.GenericViewSet ):
 
 
     @votes.mapping.post
-    def voteComment(self, request, pk, *args, **kwargs):
+    def vote(self, request, pk, *args, **kwargs):
         """
            Votes a comment
 
@@ -200,6 +200,7 @@ class CommentViewSet(viewsets.GenericViewSet ):
             if len(votes) == 0:
 
                 commentVote = saveCommentsVote(request.user, comment)
+
                 response_message = CommentDefaultVoteSerializer(commentVote).data
                 response_status = status.HTTP_200_OK
 
@@ -225,7 +226,7 @@ class CommentViewSet(viewsets.GenericViewSet ):
                 votes = CommentVotes.objects.filter(comment=comment).filter(voter=request.user)
                 if len(votes) != 0:
                     vote = votes[0]
-                    if comment.author != request.user or request.user == vote.voter:
+                    if comment.author != request.user and request.user == vote.voter:
                         deleteCommentVote(vote, comment)
 
                         response_status = status.HTTP_200_OK

@@ -140,11 +140,20 @@ class UserViewSet(viewsets.ModelViewSet):
             Updates the info
         """
         try:
+            profile = Profile.objects.get(user=request.user)
+
+        except Exception as e:
+            profile = Profile(user=request.user)
+            profile.save()
+
+
+        try:
             response_status = status.HTTP_401_UNAUTHORIZED
             response_message = {'message': ResponseMessages.e401}
 
-            user = get_user(pk)
-
+            #user = get_user(pk)
+            user = request.user
+            #profile = self.getProfile(user)
             if request.user == user:
 
                 serializer = UserInfoSerializer(data=request.data)
@@ -152,21 +161,21 @@ class UserViewSet(viewsets.ModelViewSet):
                 if serializer.is_valid():
 
 
-                    user.about = serializer.validated_data['about']
-                    user.email = serializer.validated_data['email']
-                    user.showdead = serializer.validated_data['showdead']
-                    user.noprocrast = serializer.validated_data['noprocrast']
-                    user.maxvisit = serializer.validated_data['maxvisit']
-                    user.minaway = serializer.validated_data['minaway']
-                    user.delay = serializer.validated_data['delay']
+                    profile.about = serializer.validated_data['about']
+                    profile.email = serializer.validated_data['email']
+                    profile.showdead = serializer.validated_data['showdead']
+                    profile.noprocrast = serializer.validated_data['noprocrast']
+                    profile.maxvisit = serializer.validated_data['maxvisit']
+                    profile.minaway = serializer.validated_data['minaway']
+                    profile.delay = serializer.validated_data['delay']
 
                     #usertoupdate.save()
-                    user.save()
+                    profile.save()
 
 
 
 
-                    response_message = UserInfoSerializer(user).data
+                    response_message = UserInfoSerializer(profile).data
                     response_status = status.HTTP_200_OK
 
         except Exception as e:
@@ -174,6 +183,7 @@ class UserViewSet(viewsets.ModelViewSet):
             response_status = status.HTTP_404_NOT_FOUND
 
         return Response(response_message, response_status)
+
 
 
 

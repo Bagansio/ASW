@@ -42,7 +42,25 @@ class SubmissionCreateSerializer(serializers.HyperlinkedModelSerializer):
 
 
 
+class SubmissionCreateVoteSerializer(serializers.HyperlinkedModelSerializer):
+    voter = serializers.ReadOnlyField()
+    submission = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Vote
+        fields = ['id', 'voter','submission']
+
+
 class SubmissionVoteSerializer(serializers.HyperlinkedModelSerializer):
+    voter = UserSerializer(many=False, read_only=True)
+
+
+    class Meta:
+        model = Vote
+        fields = ['id', 'voter']
+
+
+class SubmissionDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
     voter = UserSerializer(many=False, read_only=True)
     submission = SubmissionSerializer(many=False, read_only=True)
 

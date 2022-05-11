@@ -24,12 +24,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-    http_method_names = ['get', 'head', 'patch','post','delete']
+    http_method_names = ['get', 'head', 'patch',]
 
     def get_serializer_class(self):
         if self.action == 'partial_update':
-            return UserInfoSerializer
-        return UserSerializer
+            return UserUpdateInfoSerializer
+        return UserPartialInfoSerializer
 
     def list(self, request, *args, **kwargs):
         """
@@ -192,7 +192,7 @@ class UserViewSet(viewsets.ModelViewSet):
             response_message = {'message': ResponseMessages.e401}
             if request.user == user:
                 profile = Profile.objects.get(user=request.user)
-                serializer = UserInfoSerializer(data=request.data)
+                serializer = UserUpdateInfoSerializer(data=request.data)
                 if serializer.is_valid():
 
                     profile.about = serializer.validated_data['about']

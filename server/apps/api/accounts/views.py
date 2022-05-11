@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'partial_update':
             return UserUpdateInfoSerializer
-        return UserPartialInfoSerializer
+        return UserSerializer
 
     def list(self, request, *args, **kwargs):
         """

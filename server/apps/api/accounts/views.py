@@ -193,6 +193,10 @@ class UserViewSet(viewsets.ModelViewSet):
             if request.user == user:
                 profile = Profile.objects.get(user=request.user)
                 serializer = UserUpdateInfoSerializer(data=request.data)
+
+                response_status = status.HTTP_406_NOT_ACCEPTABLE
+                response_message = {'message': ResponseMessages.e406}
+
                 if serializer.is_valid():
 
                     profile.about = serializer.validated_data['about']

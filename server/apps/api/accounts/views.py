@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-    http_method_names = ['get', 'head', 'patch']
+    http_method_names = ['get', 'head', 'patch','post','delete']
 
     def get_serializer_class(self):
         if self.action == 'partial_update':
@@ -184,6 +184,47 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(response_message, response_status)
 
+    @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
+    @action(detail=True, methods=['DELETE'], name='deleteUser')
+    def deleteUser(self, request, pk, *args, **kwargs):
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        try:
+            user = get_user(pk)
+            if request.user == user:
+                user.delete()
+                response_message = {'message': 'User has been deleted'}
+                response_status = status.HTTP_200_OK
+        except Exception as e:
+            response_message = {'message': ResponseMessages.e404}
+            response_status = status.HTTP_404_NOT_FOUND
+
+        return Response(response_message, status=response_status)
+
+    @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
+    def create(self, request, pk, *args, **kwargs):
+
+        response_status = status.HTTP_401_UNAUTHORIZED
+        response_message = {'message': ResponseMessages.e401}
+        profile = Profile(user=request.user)
+
+        serializer = UserInfoSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            profile.user = serializer.validated_data['user']
+            profile.about = serializer.validated_data['about']
+            profile.email = serializer.validated_data['email']
+            profile.showdead = serializer.validated_data['showdead']
+            profile.noprocrast = serializer.validated_data['noprocrast']
+            profile.maxvisit = serializer.validated_data['maxvisit']
+            profile.minaway = serializer.validated_data['minaway']
+            profile.delay = serializer.validated_data['delay']
 
 
+            profile.save()
 
+            response_message = UserInfoSerializer(profile).data
+            response_status = status.HTTP_200_OK
+
+        return Response(response_message, status=response_status)

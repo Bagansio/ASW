@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+
+from server.apps.accounts.models import Profile
 from server.apps.core.models import *
 
 
@@ -64,5 +66,28 @@ class SubmissionDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Vote
-        fields = ['id', 'voter','submission']
+        fields = '__all__'
 
+
+class UserInfoSerializer(serializers.HyperlinkedModelSerializer):
+    user = UserSerializer(read_only=True, required=False)
+    karma = serializers.IntegerField(read_only=True, required=False)
+    about = serializers.CharField(max_length=60000, required=False)
+    email = serializers.CharField(max_length=500, required=False)
+    showdead = serializers.BooleanField(required=False)
+    noprocrast = serializers.BooleanField(required=False)
+    maxvisit = serializers.IntegerField(default=20, required=False)
+    minaway = serializers.IntegerField(default=180, required=False)
+    delay = serializers.IntegerField(default=0, required=False)
+
+    class Meta:
+        model = Profile
+        fields = ['user', 'karma', 'about', 'email', 'showdead', 'noprocrast', 'maxvisit', 'minaway','delay',]
+
+class UserMail(serializers.HyperlinkedModelSerializer):
+
+    email = serializers.CharField(max_length=500, required=True)
+
+    class Meta:
+        model = Profile
+        fields = ['email']

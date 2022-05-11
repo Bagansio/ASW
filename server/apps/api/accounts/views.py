@@ -31,6 +31,15 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserInfoSerializer
         return UserSerializer
 
+    def list(self, request, *args, **kwargs):
+        """
+            Shows users
+
+            Returns the users
+        """
+        response = super(viewsets.ModelViewSet, self).list(request, args, kwargs)
+        return response
+
     @swagger_auto_schema(responses={200: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
     @action(detail=True, methods=['GET'], name='submissions')
     def submissions(self, request, pk, *args, **kwargs):
@@ -146,8 +155,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
     @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
-    @action(detail=True, methods=['GET'], name='UserInfo')
-    def UserInfo(self, request, pk, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         """
             Shows the info of given user
 
@@ -158,43 +166,34 @@ class UserViewSet(viewsets.ModelViewSet):
         response_message = {'message': ResponseMessages.e404}
         user = get_user(pk)
         if user is not None:
-            queryset = Profile.objects.filter(user=user)
-
-            serializer = UserInfoSerializer(queryset, many=True, context={'request': request})
-            return Response(serializer.data)
+            profile = Profile.objects.get(user=user)
+            response_status = status.HTTP_200_OK
+            if request.user == user:
+                response_message = UserInfoSerializer(profile).data
+            else:
+                response_message = UserPartialInfoSerializer(profile).data
 
         return Response(response_message, status=response_status)
 
 
-    @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
-
+    @swagger_auto_schema(responses={200: UserInfoSerializer, 401: get_response(ResponseMessages.e401), 404: get_response(ResponseMessages.e404)})
     def partial_update(self, request , pk ,*args, **kwargs):
         """
             Uptdates info of given user
 
             Updates the info
         """
-        try:
-            profile = Profile.objects.get(user=request.user)
 
-        except Exception as e:
-            profile = Profile(user=request.user)
-            profile.save()
-
-
-        try:
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        user = get_user(pk)
+        if user is not None:
             response_status = status.HTTP_401_UNAUTHORIZED
             response_message = {'message': ResponseMessages.e401}
-
-            #user = get_user(pk)
-            user = request.user
-            #profile = self.getProfile(user)
             if request.user == user:
-
+                profile = Profile.objects.get(user=request.user)
                 serializer = UserInfoSerializer(data=request.data)
-
                 if serializer.is_valid():
-
 
                     profile.about = serializer.validated_data['about']
                     profile.email = serializer.validated_data['email']
@@ -203,63 +202,10 @@ class UserViewSet(viewsets.ModelViewSet):
                     profile.maxvisit = serializer.validated_data['maxvisit']
                     profile.minaway = serializer.validated_data['minaway']
                     profile.delay = serializer.validated_data['delay']
-
                     #usertoupdate.save()
                     profile.save()
-
-
-
 
                     response_message = UserInfoSerializer(profile).data
                     response_status = status.HTTP_200_OK
 
-        except Exception as e:
-            response_message = {'message': ResponseMessages.e404}
-            response_status = status.HTTP_404_NOT_FOUND
-
         return Response(response_message, response_status)
-
-    @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
-    @action(detail=True, methods=['DELETE'], name='deleteUser')
-    def deleteUser(self, request, pk, *args, **kwargs):
-        response_status = status.HTTP_401_UNAUTHORIZED
-        response_message = {'message': ResponseMessages.e401}
-        try:
-            user = get_user(pk)
-            if request.user == user:
-                user.delete()
-                response_message = {'message': 'User has been deleted'}
-                response_status = status.HTTP_200_OK
-        except Exception as e:
-            response_message = {'message': ResponseMessages.e404}
-            response_status = status.HTTP_404_NOT_FOUND
-
-        return Response(response_message, status=response_status)
-
-    @swagger_auto_schema(responses={200: UserInfoSerializer, 404: get_response(ResponseMessages.e404)})
-    def create(self, request, pk, *args, **kwargs):
-
-        response_status = status.HTTP_401_UNAUTHORIZED
-        response_message = {'message': ResponseMessages.e401}
-        profile = Profile(user=request.user)
-
-        serializer = UserInfoSerializer(data=request.data)
-
-        if serializer.is_valid():
-
-            profile.user = serializer.validated_data['user']
-            profile.about = serializer.validated_data['about']
-            profile.email = serializer.validated_data['email']
-            profile.showdead = serializer.validated_data['showdead']
-            profile.noprocrast = serializer.validated_data['noprocrast']
-            profile.maxvisit = serializer.validated_data['maxvisit']
-            profile.minaway = serializer.validated_data['minaway']
-            profile.delay = serializer.validated_data['delay']
-
-
-            profile.save()
-
-            response_message = UserInfoSerializer(profile).data
-            response_status = status.HTTP_200_OK
-
-        return Response(response_message, status=response_status)

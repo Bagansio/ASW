@@ -68,6 +68,14 @@ class SubmissionDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
         model = Vote
         fields = '__all__'
 
+class UserPartialInfoSerializer(serializers.HyperlinkedModelSerializer):
+    user = UserSerializer(read_only=True, required=False)
+    karma = serializers.IntegerField(read_only=True, required=False)
+    about = serializers.CharField(max_length=60000, required=False)
+
+    class Meta:
+        model = Profile
+        fields = ['user', 'karma', 'about']
 
 class UserInfoSerializer(serializers.HyperlinkedModelSerializer):
     user = UserSerializer(read_only=True, required=False)

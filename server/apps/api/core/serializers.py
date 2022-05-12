@@ -102,15 +102,14 @@ class UserMail(serializers.HyperlinkedModelSerializer):
 
 class UserUpdateInfoSerializer(serializers.HyperlinkedModelSerializer):
 
-    karma = serializers.IntegerField(read_only=True, required=False)
     about = serializers.CharField(max_length=60000, required=False)
     email = serializers.CharField(max_length=500, required=False)
     showdead = serializers.BooleanField(required=False)
     noprocrast = serializers.BooleanField(required=False)
-    maxvisit = serializers.IntegerField(default=20, required=False)
-    minaway = serializers.IntegerField(default=180, required=False)
+    maxvisit = serializers.IntegerField( required=False)
+    minaway = serializers.IntegerField(required=False)
     delay = serializers.IntegerField(default=0, required=False)
 
     class Meta:
         model = Profile
-        fields = ['karma', 'about', 'email', 'showdead', 'noprocrast', 'maxvisit', 'minaway','delay',]
+        fields = [ 'about', 'email', 'showdead', 'noprocrast', 'maxvisit', 'minaway','delay',]

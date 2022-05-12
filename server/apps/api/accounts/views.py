@@ -24,12 +24,58 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-    http_method_names = ['get', 'head', 'patch',]
+    http_method_names = ['get', 'head', 'put',]
 
     def get_serializer_class(self):
-        if self.action == 'partial_update':
+        if self.action == 'update':
             return UserUpdateInfoSerializer
         return UserSerializer
+
+    @swagger_auto_schema(responses={200: UserInfoSerializer, 401: get_response(ResponseMessages.e401), 404: get_response(ResponseMessages.e404)})
+    def update(self, request, pk, *args, **kwargs):
+        """
+            Uptdates info of given user
+
+            Updates the info
+        """
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        user = get_user(pk)
+        if user is not None:
+            response_status = status.HTTP_401_UNAUTHORIZED
+            response_message = {'message': ResponseMessages.e401}
+            if request.user == user:
+                profile = Profile.objects.get(user=request.user)
+                serializer = UserUpdateInfoSerializer(data=request.data, partial=True)
+
+                response_status = status.HTTP_406_NOT_ACCEPTABLE
+                response_message = {'message': ResponseMessages.e406}
+
+                if serializer.is_valid():
+                    print(serializer.validated_data)
+                    if 'about' in serializer.validated_data:
+                        profile.about = serializer.validated_data['about']
+                    if 'email' in serializer.validated_data:
+                        profile.email = serializer.validated_data['email']
+                    if 'showdead' in serializer.validated_data:
+                        profile.showdead = serializer.validated_data['showdead']
+                    if 'noprocrast' in serializer.validated_data:
+                        profile.noprocrast = serializer.validated_data['noprocrast']
+                    if 'maxvisit' in serializer.validated_data:
+                        profile.maxvisit = serializer.validated_data['maxvisit']
+                    if 'minaway' in serializer.validated_data:
+                        profile.minaway = serializer.validated_data['minaway']
+                    if 'delay' in serializer.validated_data:
+                        profile.delay = serializer.validated_data['delay']
+                    # usertoupdate.save()
+                    profile.save()
+
+                    response_message = UserInfoSerializer(profile).data
+                    response_status = status.HTTP_200_OK
+
+        return Response(response_message, response_status)
+
+
 
     def list(self, request, *args, **kwargs):
         """
@@ -174,42 +220,3 @@ class UserViewSet(viewsets.ModelViewSet):
                 response_message = UserPartialInfoSerializer(profile).data
 
         return Response(response_message, status=response_status)
-
-
-    @swagger_auto_schema(responses={200: UserInfoSerializer, 401: get_response(ResponseMessages.e401), 404: get_response(ResponseMessages.e404)})
-    def partial_update(self, request , pk ,*args, **kwargs):
-        """
-            Uptdates info of given user
-
-            Updates the info
-        """
-
-        response_status = status.HTTP_404_NOT_FOUND
-        response_message = {'message': ResponseMessages.e404}
-        user = get_user(pk)
-        if user is not None:
-            response_status = status.HTTP_401_UNAUTHORIZED
-            response_message = {'message': ResponseMessages.e401}
-            if request.user == user:
-                profile = Profile.objects.get(user=request.user)
-                serializer = UserUpdateInfoSerializer(data=request.data)
-
-                response_status = status.HTTP_406_NOT_ACCEPTABLE
-                response_message = {'message': ResponseMessages.e406}
-
-                if serializer.is_valid():
-
-                    profile.about = serializer.validated_data['about']
-                    profile.email = serializer.validated_data['email']
-                    profile.showdead = serializer.validated_data['showdead']
-                    profile.noprocrast = serializer.validated_data['noprocrast']
-                    profile.maxvisit = serializer.validated_data['maxvisit']
-                    profile.minaway = serializer.validated_data['minaway']
-                    profile.delay = serializer.validated_data['delay']
-                    #usertoupdate.save()
-                    profile.save()
-
-                    response_message = UserInfoSerializer(profile).data
-                    response_status = status.HTTP_200_OK
-
-        return Response(response_message, response_status)

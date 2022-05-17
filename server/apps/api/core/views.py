@@ -22,7 +22,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     filter_backends = (OrderingFilter, SearchFilter)
     ordering_fields = ['author', 'created_at', 'votes', 'comments']
-    search_fields = ('title', 'url')
+
     http_method_names = ['get', 'post', 'head', 'delete']
 
     def get_serializer_class(self):
@@ -42,11 +42,17 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
             You can order by 'author' , 'created_at' and 'votes'.
             Also if want a reverse order add a "-" prefix.
-
-            Search by 'title' or 'url'
         """
-        response = super(viewsets.ModelViewSet, self).list(request, args, kwargs)
-        return response
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        try:
+            queryset = Submission.objects.all().order_by(request.query_params['ordering'])
+        except Exception as e:
+            queryset = Submission.objects.all()
+        serializer = SubmissionSerializer(queryset, context={'user': request.user}, many=True)
+
+        #serializer.get_status(request.user)
+        return Response(serializer.data)
 
     @swagger_auto_schema(responses={200: SubmissionSerializer, 404: get_response(ResponseMessages.e404)})
     def retrieve(self, request, *args, **kwargs):
@@ -149,7 +155,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             return Response(response_message, response_status)
 
         queryset = Comment.objects.filter(submission=submission)
-        serializer = CommentSerializer(queryset, many=True)
+        serializer = CommentSerializer(queryset,  context={'user': request.user}, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(responses={200: CommentSerializer,

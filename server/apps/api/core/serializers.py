@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from server.apps.accounts.models import Profile
 from server.apps.core.models import *
+from server.apps.comments.models import *
 
 
 class MessageSerializer(serializers.Serializer):
@@ -21,12 +22,38 @@ class SubmissionSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.URLField(max_length=200,  required=False)
     text = serializers.CharField(required=False)
     created_at = serializers.DateTimeField(required=False)
-    votes = serializers.IntegerField(required=False)
-    comments = serializers.IntegerField(required=False)
+    votes = serializers.SerializerMethodField('get_votes')
+    comments = serializers.SerializerMethodField('get_comments')
+    status = serializers.SerializerMethodField('get_status')
 
     class Meta:
         model = Submission
         fields = '__all__'
+
+    def get_votes(self, object):
+        return len(Vote.objects.filter(submission=object))
+
+    def get_comments(self, object):
+        return len(Comment.objects.filter(submission=object))
+
+
+    def get_status(self, object):
+        user = self.context.get('user')
+        author = object.author
+
+        if user == author:
+            status = 'owner'
+        else:
+            votes = Vote.objects.filter(voter=user).filter(submission=object)
+
+            if len(votes) > 0:
+                status = 'voted'
+            else:
+                status = 'unvoted'
+
+        return status
+
+
 
 
 class SubmissionCommentSerializer(serializers.HyperlinkedModelSerializer):

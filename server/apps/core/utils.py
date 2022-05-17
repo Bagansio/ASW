@@ -45,3 +45,4 @@ def changeNumberOfVotes(submission, sign):
     else:
         submission.votes -= 1
 
+

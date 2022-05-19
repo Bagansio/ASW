@@ -14,8 +14,7 @@ SECRET_KEY = config("SECRET_KEY", default="django-insecure$server.settings.local
 
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost", cast=Csv())
-
+ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -211,8 +210,7 @@ SERVER_ENVIRONMENT = config("SERVER_ENVIRONMENT", default="local")
 # ==============================================================================
 
 
-CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 
 CORS_ALLOW_HEADERS = [
     'accept',

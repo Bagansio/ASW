@@ -225,13 +225,17 @@ CORS_ALLOW_HEADERS = [
     'access-control-allow-origin',
 ]
 
+CORS_ORIGIN_WHITELIST = (
+  'http://localhost:3000',
+)
+
 # ==============================================================================
 # API SETTINGS
 # ==============================================================================
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # <-- And here

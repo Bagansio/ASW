@@ -21,10 +21,10 @@ class CommentViewSet(viewsets.GenericViewSet ):
     queryset = Comment.objects.all()
     serializer = CommentSerializer(queryset, many=True)
     serializer_class = CommentSerializer
-    http_method_names = ['get', 'post', 'patch', 'head', 'delete']
+    http_method_names = ['get', 'post', 'put', 'head', 'delete']
 
     def get_serializer_class(self):
-        if self.action == 'reply' or self.action == 'partial_update':
+        if self.action == 'reply' or self.action == 'update':
             return CommentCreateSerializer
         elif self.action == 'vote':
             return CommentCreateVoteSerializer
@@ -133,7 +133,7 @@ class CommentViewSet(viewsets.GenericViewSet ):
         return Response(response_message, status=response_status)
 
 
-    def partial_update(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         """
             Deletes a comment
 

@@ -29,12 +29,33 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
     level = serializers.IntegerField()
     parent = CommentParentSerializer(many=False, read_only=True)
     created_at = serializers.DateTimeField(required=False)
-    votes = serializers.IntegerField(required=False)
+    votes = serializers.SerializerMethodField('get_votes')
+    status = serializers.SerializerMethodField('get_status')
 
     class Meta:
         model = Comment
         fields = ('id', 'submission', 'author', 'text',
-                  'level', 'parent', 'created_at', 'votes')
+                  'level', 'parent', 'created_at', 'votes', 'status')
+
+    def get_votes(self, object):
+        return len(CommentVotes.objects.filter(comment=object))
+
+
+    def get_status(self, object):
+        user = self.context.get('user')
+        author = object.author
+
+        if user == author:
+            status = 'owner'
+        else:
+            votes = CommentVotes.objects.filter(voter=user).filter(comment=object)
+
+            if len(votes) > 0:
+                status = 'voted'
+            else:
+                status = 'unvoted'
+
+        return status
 
 
 

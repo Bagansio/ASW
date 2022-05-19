@@ -93,7 +93,7 @@ class SubmissionDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Vote
-        fields = '__all__'
+        fields = ['id', 'voter','submission']
 
 class UserPartialInfoSerializer(serializers.HyperlinkedModelSerializer):
     user = UserSerializer(read_only=True, required=False)

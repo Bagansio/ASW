@@ -138,6 +138,20 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 response_status = status.HTTP_406_NOT_ACCEPTABLE
         return Response(response_message, status=response_status)
 
+    @action(detail=False, methods=['GET'], name='asks')
+    def asks(self,request, *args, **kwargs):
+        response_status = status.HTTP_404_NOT_FOUND
+        response_message = {'message': ResponseMessages.e404}
+        try:
+            queryset = Submission.objects.filter(url=None).order_by(request.query_params['ordering'])
+        except Exception as e:
+            queryset = Submission.objects.filter(url=None)
+
+        serializer = SubmissionSerializer(queryset, context={'user': request.user}, many=True)
+
+        # serializer.get_status(request.user)
+        return Response(serializer.data)
+
     @swagger_auto_schema(responses={200: CommentSerializer, 404: get_response(ResponseMessages.e404)})
     @action(detail=True, methods=['GET'], name='comments')
     def comments(self, request, pk, *args, **kwargs):
@@ -218,6 +232,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         """
         response_status = status.HTTP_401_UNAUTHORIZED
         response_message = {'message': ResponseMessages.e401}
+
         if request.user.is_authenticated:
             try:
                 submission = Submission.objects.get(id=pk)

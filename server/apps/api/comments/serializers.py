@@ -72,7 +72,7 @@ class CommentDefaultVoteSerializer(serializers.HyperlinkedModelSerializer):
     comment = CommentSerializer(many=False, read_only=True)
 
     class Meta:
-        model = Vote
+        model = CommentVotes
         fields = ['id', 'voter','comment']
 
 

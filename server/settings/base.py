@@ -15,6 +15,7 @@ SECRET_KEY = config("SECRET_KEY", default="django-insecure$server.settings.local
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -212,30 +213,6 @@ SERVER_ENVIRONMENT = config("SERVER_ENVIRONMENT", default="local")
 
 CORS_ALLOW_ALL = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    'http://localhost:3000',
-]
 
 # ==============================================================================
 # API SETTINGS

@@ -1,6 +1,7 @@
 from server.apps.comments.models import *
 from django.utils import timezone
 
+#hola
 
 def create_comment(author, text, submission, level, parent):
     comment = Comment(author=author, text=text, parent=parent,submission=submission,
